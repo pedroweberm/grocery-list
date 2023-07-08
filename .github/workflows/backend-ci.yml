@@ -2,7 +2,7 @@ name: CI-backend
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [develop, testing, master]
     paths:
       - backend/**
 

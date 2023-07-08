@@ -2,7 +2,7 @@ name: CI-backend
 
 on:
   push:
-    branches: [develop, testing, master]
+    branches: [testing, master]
     paths:
       - backend/**
 
@@ -43,4 +43,4 @@ jobs:
         run: |
           cd ${{ env.base_folder }} && \
           npm run deploy -- \
-          --stage=$(echo '{ "develop": "dev", "testing": "testing", "master": "production" }' | jq -r 'to_entries[] | select(.key=="${{ github.ref_name }}") | .value')
+          --stage=$(echo '{ "testing": "testing", "master": "production" }' | jq -r 'to_entries[] | select(.key=="${{ github.ref_name }}") | .value')

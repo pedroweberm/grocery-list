@@ -18,6 +18,11 @@ module.exports = async ({ resolveVariable }) => {
   it means you are missing some variables in your .env.${stage}.json file`);
 
   switch (stage) {
+    case 'local': {
+      const variables = await getEnvValuesFromFile(stage, Object.keys(envVariables))
+
+      return variables;
+    }
     case 'dev': {
       const variables = await getEnvValuesFromFile(stage, Object.keys(envVariables))
 
