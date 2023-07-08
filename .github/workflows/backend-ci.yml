@@ -92,11 +92,11 @@ jobs:
       - name: Deploy to temporary environment
         run: |
           echo "STAGE_NAME=pr-${{github.event.number}}" >> $GITHUB_ENV
-          cd ${{ env.base_folder }} && npm run deploy:pr -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}
+          cd ${{ env.base_folder }} && npm run deploy -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}
 
       - name: Run end to end test
         run: cd ${{ env.base_folder }} && env STAGE_NAME=pr-${{github.event.number}} npm run test:e2e
 
       - name: Remove temporary environment
         run: |
-          cd ${{ env.base_folder }} && npm run remove:pr -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}
+          cd ${{ env.base_folder }} && npm run remove -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}
