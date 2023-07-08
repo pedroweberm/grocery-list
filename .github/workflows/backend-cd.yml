@@ -9,8 +9,6 @@ on:
 env:
   node_version: 18
   base_folder: backend
-  aws_profile_name: grocery-list
-  branch_environment_names: '{ "develop": "dev", "testing": "testing", "master": "production" }'
 
 jobs:
   Deploy:
@@ -45,4 +43,4 @@ jobs:
         run: |
           cd ${{ env.base_folder }} && \
           npm run deploy -- \
-          --stage=$(echo ${{ env.branch_environment_names }} | jq -r 'to_entries[] | select(.key=="${{ github.ref_name }}") | .value')
+          --stage=$(echo '{ "develop": "dev", "testing": "testing", "master": "production" }' | jq -r 'to_entries[] | select(.key=="${{ github.ref_name }}") | .value')
