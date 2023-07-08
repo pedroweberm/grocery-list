@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "baseUrl": "./",
+    "rootDir": "../",
+    "types": ["node", "mocha", "chai", "chai-as-promised"],
+    "paths": {
+      "@src/*": [ "../src/*" ],
+      "@features/*": [ "../src/features/*" ]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.json", "../src"]
+}
