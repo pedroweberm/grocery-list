@@ -8,6 +8,7 @@ on:
 
 env:
   node_version: 18
+  base_folder: backend
 
 jobs:
   Lint:
@@ -16,24 +17,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Go to backend folder
-        run: cd backend
-
       - name: Set up Node.js v${{ env.node_version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
 
       - name: Install NPM dependencies
         run: |
-          if [ ! -d ./node_modules ]; then
+          if [ ! -d .backend/node_modules ]; then
+            cd ${{ env.base_folder }}
             npm i
           fi
 
       - name: Run lint
-        run: npm run lint
+        run: cd ${{ env.base_folder }} && npm run lint
 
   Unit-Test:
     needs: Lint
@@ -42,24 +41,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Go to backend folder
-        run: cd backend
-
       - name: Set up Node.js v${{ env.node_version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
 
       - name: Install NPM dependencies
         run: |
           if [ ! -d ./node_modules ]; then
+            cd ${{ env.base_folder }}
             npm i
           fi
 
       - name: Run unit tests
-        run: npm run test:unit
+        run: cd ${{ env.base_folder }} && npm run test:unit
 
   End-to-End-Test:
     needs: Unit-Test
@@ -68,26 +65,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Go to backend folder
-        run: cd backend
-
       - name: Set up Node.js v${{ env.node_version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
 
       - name: Install NPM dependencies
         run: |
           if [ ! -d ./node_modules ]; then
+            cd ${{ env.base_folder }}
             npm i
           fi
 
       - name: Deploy to temporary environment
         run: |
           echo "STAGE_NAME=${{github.event.number}}"" >> "$GITHUB_ENV"
-          npm run deploy:pr -- --stage=pr-$pr_number
+          cd ${{ env.base_folder }} && npm run deploy:pr -- --stage=pr-$pr_number
 
       - name: Run end to end test
-        run: env STAGE_NAME=${{ env.STAGE_NAME }} npm run test:e2d
+        run: cd ${{ env.base_folder }} && env STAGE_NAME=${{ env.STAGE_NAME }} npm run test:e2d
