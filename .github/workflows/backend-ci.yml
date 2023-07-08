@@ -91,7 +91,7 @@ jobs:
 
       - name: Deploy to temporary environment
         run: |
-          echo "STAGE_NAME=pr-${{github.event.number}}" >> "$GITHUB_ENV"
+          echo "STAGE_NAME=pr-${{github.event.number}}" >> $GITHUB_ENV
           cd ${{ env.base_folder }} && npm run deploy:pr -- --aws-profile ${{ env.aws_profile_name }} --stage=${{ env.STAGE_NAME }}
 
       - name: Run end to end test
