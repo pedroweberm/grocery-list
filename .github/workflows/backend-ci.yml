@@ -12,55 +12,55 @@ env:
   aws_profile_name: grocery-list-testing
 
 jobs:
-  # Lint:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v3
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  #     - name: Set up Node.js v${{ env.node_version }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ${{ env.node_version }}
-  #         cache: 'npm'
-  #         cache-dependency-path: ${{ env.base_folder }}/package-lock.json
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
 
-  #     - name: Install NPM dependencies
-  #       run: |
-  #         if [ ! -d .backend/node_modules ]; then
-  #           cd ${{ env.base_folder }}
-  #           npm i
-  #         fi
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d .backend/node_modules ]; then
+            cd ${{ env.base_folder }}
+            npm i
+          fi
 
-  #     - name: Run lint
-  #       run: cd ${{ env.base_folder }} && npm run lint
+      - name: Run lint
+        run: cd ${{ env.base_folder }} && npm run lint
 
-  # Unit-Test:
-  #   needs: Lint
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v3
+  Unit-Test:
+    needs: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  #     - name: Set up Node.js v${{ env.node_version }}
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: ${{ env.node_version }}
-  #         cache: 'npm'
-  #         cache-dependency-path: ${{ env.base_folder }}/package-lock.json
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
 
-  #     - name: Install NPM dependencies
-  #       run: |
-  #         if [ ! -d ./node_modules ]; then
-  #           cd ${{ env.base_folder }}
-  #           npm i
-  #         fi
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d ./node_modules ]; then
+            cd ${{ env.base_folder }}
+            npm i
+          fi
 
-  #     - name: Run unit tests
-  #       run: cd ${{ env.base_folder }} && npm run test:unit
+      - name: Run unit tests
+        run: cd ${{ env.base_folder }} && npm run test:unit
 
   End-to-End-Test:
-    # needs: Unit-Test
+    needs: Unit-Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -95,7 +95,7 @@ jobs:
           cd ${{ env.base_folder }} && npm run deploy:pr -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}
 
       - name: Run end to end test
-        run: cd ${{ env.base_folder }} && env STAGE_NAME=pr-${{github.event.number}} npm run test:e2d
+        run: cd ${{ env.base_folder }} && env STAGE_NAME=pr-${{github.event.number}} npm run test:e2e
 
       - name: Remove temporary environment
         run: |

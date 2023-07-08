@@ -21,6 +21,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
+    "axios": "^1.4.0",
     "chai": "^4.3.6",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.7.0",
@@ -42,7 +43,7 @@
   },
   "scripts": {
     "test:unit": "nyc ts-mocha --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/unit/**/*.ts'",
-    "test:e2e": "ts-mocha --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/e2e/**/*.ts'",
+    "test:e2e": "ts-mocha --timeout 10000 --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/e2e/**/*.ts'",
     "offline": "npm run build && npx serverless offline start --stage development",
     "build": "rimraf dist && tsc",
     "dev": "npx nodemon --exec npm run offline",
