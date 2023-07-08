@@ -49,6 +49,7 @@
     "deploy:dev": "npm run build && npx serverless deploy --verbose --aws-profile grocery-list-dev --stage dev",
     "remove:dev": "npx serverless remove --verbose --aws-profile grocery-list-dev --stage dev",
     "deploy:pr": "npm run build && npx serverless deploy --verbose",
+    "remove:pr": "npx serverless remove --verbose",
     "lint": "eslint . --ext .ts"
   }
 }
