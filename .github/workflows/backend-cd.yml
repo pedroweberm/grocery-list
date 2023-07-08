@@ -10,9 +10,7 @@ env:
   node_version: 18
   base_folder: backend
   aws_profile_name: grocery-list
-  development_environment_name: dev
-  testing_environment_name: testing
-  production_environment_name: production
+  branch_environment_names: '{ "develop": "dev", "testing": "testing", "master": "production" }'
 
 jobs:
   Deploy:
@@ -47,4 +45,4 @@ jobs:
         run: |
           cd ${{ env.base_folder }} && \
           npm run deploy -- \
-          --stage=${{ fromJson('{ "develop": ${{ env.development_environment_name }}, "testing": ${{ env.testing_environment_name }}, "master": ${{ env.production_environment_name }} }')[${{ github.ref_name }}] }}
+          --stage=$(echo ${{ env.branch_environment_names }} | jq -r 'to_entries[] | select(.key=="${{ github.ref_name }}") | .value')
