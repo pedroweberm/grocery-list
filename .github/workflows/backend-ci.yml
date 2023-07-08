@@ -9,6 +9,7 @@ on:
 env:
   node_version: 18
   base_folder: backend
+  aws_profile_name: grocery-list-testing
 
 jobs:
   Lint:
@@ -79,10 +80,19 @@ jobs:
             npm i
           fi
 
+      - name: Setup AWS Credentials
+        run: |
+          npx serverless config credentials \
+          --provider aws \
+          --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
+          --secret $AWS_SECRET_ACCESS_KEY \
+          --profile ${{ env.aws_profile_name }} \
+          --overwrite
+
       - name: Deploy to temporary environment
         run: |
-          echo "STAGE_NAME=${{github.event.number}}" >> "$GITHUB_ENV"
-          cd ${{ env.base_folder }} && npm run deploy:pr -- --stage=pr-$pr_number
+          echo "STAGE_NAME=pr-${{github.event.number}}" >> "$GITHUB_ENV"
+          cd ${{ env.base_folder }} && npm run deploy:pr -- --aws-profile ${{ env.aws_profile_name }} --stage=${{ env.STAGE_NAME }}
 
       - name: Run end to end test
         run: cd ${{ env.base_folder }} && env STAGE_NAME=${{ env.STAGE_NAME }} npm run test:e2d
