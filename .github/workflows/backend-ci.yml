@@ -16,6 +16,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Go to backend folder
+        run: cd backend
+
       - name: Set up Node.js v${{ env.node_version }}
         uses: actions/setup-node@v3
         with:
