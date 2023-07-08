@@ -4,8 +4,9 @@ import { stub } from 'sinon';
 
 import { handler } from '@features/test-feature';
 
-describe('Example unit test', () => {
+describe('Example end to end test', () => {
   const testFunction = stub();
+  console.log('Running integration test for stage', process.env.STAGE_NAME);
 
   it('function should be called', () => {
     testFunction();

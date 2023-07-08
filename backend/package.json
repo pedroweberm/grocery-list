@@ -41,12 +41,14 @@
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "test": "nyc ts-mocha --type-check --require tsconfig-paths/register -p tests/tsconfig.json",
+    "test:unit": "nyc ts-mocha --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/unit/**/*.ts'",
+    "test:e2e": "ts-mocha --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/e2e/**/*.ts'",
     "offline": "npm run build && npx serverless offline start --stage development",
     "build": "rimraf dist && tsc",
     "dev": "npx nodemon --exec npm run offline",
     "deploy:dev": "npm run build && npx serverless deploy --verbose --aws-profile grocery-list-dev --stage dev",
     "remove:dev": "npx serverless remove --verbose --aws-profile grocery-list-dev --stage dev",
+    "deploy:pr": "npm run build && npx serverless deploy --verbose --aws-profile grocery-list-testing",
     "lint": "eslint . --ext .ts"
   }
 }

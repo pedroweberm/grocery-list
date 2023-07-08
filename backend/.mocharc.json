@@ -1,8 +1,0 @@
-{
-  "extensions": [
-    "ts"
-  ],
-  "spec": [
-    "tests/unit/**/*.spec.*"
-  ]
-}
