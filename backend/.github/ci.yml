@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - backend/**
+
+env:
+  node_version: 18
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d ./node_modules ]; then
+            npm i
+          fi
+
+      - name: Run lint
+        run: npm run lint
+
+  Unit-Test:
+    needs: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d ./node_modules ]; then
+            npm i
+          fi
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+  End-to-End-Test:
+    needs: Unit-Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d ./node_modules ]; then
+            npm i
+          fi
+
+      - name: Deploy to temporary environment
+        run: |
+          echo "STAGE_NAME=${{github.event.number}}"" >> "$GITHUB_ENV"
+          npm run deploy:pr -- --stage=pr-$pr_number
+
+      - name: Run end to end test
+        run: env STAGE_NAME=${{ env.STAGE_NAME }} npm run test:e2d
