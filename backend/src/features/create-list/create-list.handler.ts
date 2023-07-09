@@ -22,7 +22,7 @@ export const CreateListHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
     const databaseResponse = await dynamoDBClient.put({
       TableName: config.dynamoDBTableName,
       Item: {
-        partition_key: `list-member#${data.userId}`,
+        partition_key: `list-member#${list.ownerId}`,
         sort_key: `list#${list.id}`,
         list_id: list.id,
         list_owner_id: list.ownerId,
