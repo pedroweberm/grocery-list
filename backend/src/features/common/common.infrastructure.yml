@@ -1,0 +1,27 @@
+resources:
+  GroceryListTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: grocery-list-table-${self:provider.stage}
+      AttributeDefinitions:
+        - AttributeName: partition_key
+          AttributeType: S
+        - AttributeName: sort_key
+          AttributeType: S
+        - AttributeName: list_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: partition_key
+          KeyType: HASH
+        - AttributeName: sort_key
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: list_members_index
+          KeySchema:
+            - AttributeName: list_id
+              KeyType: HASH
+            - AttributeName: sort_key
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST

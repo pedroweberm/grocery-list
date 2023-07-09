@@ -1,30 +1,48 @@
 const envVariables = require('../.env.example.json')
 
 module.exports = async ({ resolveVariable }) => {
-  const getEnvValuesFromFile = async (runningStage, variableNames) => {
-    const resolvedVariables = await Promise.all(variableNames.map(async (variableName) => {
-      const resolvedValue = await resolveVariable(`file(./.env.${runningStage}.json):${variableName}`)
+  const getEnvValuesFromFile = async (runningStage) => {
+    const variables = require(`../.env.${runningStage}.json`)
 
-      return [variableName, resolvedValue]
-    }))
+    return variables
+  }
 
-    return resolvedVariables.reduce((acc, [name, value]) => ({ ...acc, [name]: value }), {})
+  const validateVariables = (loadedVariables) => {
+    const exampleEnvVariables = Object.keys(envVariables)
+
+    exampleEnvVariables.forEach((variableName) => {
+      const value = loadedVariables[variableName]
+
+      if (!value || value.length === 0) {
+        throw new Error(`Variable ${variableName} is missing (defined in .env.example.json)`)
+      }
+    })
   }
 
   const stage = await resolveVariable('self:provider.stage');
 
-  console.log(`Resolving environment variables for '${stage}' stage...\
-  \nIf you get the 'Cannot resolve variable at "custom.variables": Value not found at "file" source'\
-  it means you are missing some variables in your .env.${stage}.json file`);
+  console.log(`Resolving environment variables for '${stage}' stage...`);
 
   switch (stage) {
     case 'local': {
-      const variables = await getEnvValuesFromFile(stage, Object.keys(envVariables))
+      const variablesFromFile = await getEnvValuesFromFile(stage)
+      validateVariables(variablesFromFile)
 
-      return variables;
+      return variablesFromFile;
     }
     case 'dev': {
-      const variables = await getEnvValuesFromFile(stage, Object.keys(envVariables))
+      const variablesFromFile = await getEnvValuesFromFile(stage)
+      const customVariables = {
+        "DYNAMODB_TABLE_NAME": { Ref: 'GroceryListTable' }
+      }
+      const variables = {
+        ...variablesFromFile,
+        ...customVariables
+      }
+
+      console.log('resolved variables for stage', stage, variables)
+
+      validateVariables(variables)
 
       return variables;
     }

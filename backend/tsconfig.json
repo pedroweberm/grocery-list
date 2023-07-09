@@ -20,7 +20,8 @@
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "@src/*": [ "./src/*" ],
-      "@features/*": [ "./src/features/*" ]
+      "@features/*": [ "./src/features/*" ],
+      "@clients/*": [ "./src/clients/*" ],
     }
   },
   "include": ["./src/**/*.ts", "./src/**/*.json", "tests/tsconfig.json"],

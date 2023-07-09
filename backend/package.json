@@ -5,6 +5,8 @@
   "main": "dist/index.ts",
   "author": "Pedro Weber Mendonça",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.363.0",
+    "@aws-sdk/lib-dynamodb": "^3.365.0",
     "superstruct": "^1.0.3",
     "tslib": "^2.0.1",
     "uuid": "^8.3.2"
@@ -44,7 +46,7 @@
   "scripts": {
     "test:unit": "nyc ts-mocha --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/unit/**/*.ts'",
     "test:e2e": "ts-mocha --timeout 10000 --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/e2e/**/*.ts'",
-    "offline": "npm run build && npx serverless offline start --stage local",
+    "offline": "npm run build && npx serverless offline start --stage dev",
     "build": "rimraf dist && tsc",
     "local": "npx nodemon --exec npm run offline",
     "deploy:dev": "npm run build && npx serverless deploy --verbose --aws-profile grocery-list-dev --stage dev",

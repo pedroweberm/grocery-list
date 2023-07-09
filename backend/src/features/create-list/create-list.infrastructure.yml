@@ -1,0 +1,9 @@
+functions:
+  'create-list':
+    handler: dist/src/features/create-list/index.handler
+    events:
+      - http:
+          path: '/lists'
+          method: 'post'
+    environment:
+      DYNAMODB_TABLE_NAME: ${self:custom.variables.DYNAMODB_TABLE_NAME}
