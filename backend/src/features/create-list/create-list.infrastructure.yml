@@ -5,5 +5,12 @@ functions:
       - http:
           path: '/lists'
           method: 'post'
+          authorizer:
+            name: GroceryListAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - GroceryListCognitoUserPool
+                - Arn
     environment:
       DYNAMODB_TABLE_NAME: ${self:custom.variables.DYNAMODB_TABLE_NAME}

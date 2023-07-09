@@ -10,9 +10,14 @@ export const CreateListHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
 
     const list = {
       id: uuid(),
-      ownerId: data.userId,
+      ownerId: event.requestContext.authorizer?.claims?.sub,
       createdAtTimestamp: new Date().getTime(),
+      name: data.name,
     };
+
+    if (!list.ownerId) {
+      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'Could not find user id' }) };
+    }
 
     const databaseResponse = await dynamoDBClient.put({
       TableName: config.dynamoDBTableName,
@@ -22,6 +27,7 @@ export const CreateListHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
         list_id: list.id,
         list_owner_id: list.ownerId,
         created_at_timestamp: list.createdAtTimestamp,
+        list_name: list.name,
       },
     });
 
