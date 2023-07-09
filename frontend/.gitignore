@@ -24,3 +24,6 @@ secrets.json
 *.njsproj
 *.sln
 *.sw?
+
+# env files
+.env.local.json
