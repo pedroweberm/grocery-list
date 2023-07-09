@@ -1,0 +1,70 @@
+resources:
+  GroceryListCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: grocery-list-user-pool-${self:provider.stage}
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: False
+        UnusedAccountValidityDays: 365
+      AutoVerifiedAttributes:
+        - email
+      MfaConfiguration: OFF
+      Schema:
+        - Name: preferred_username
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+          StringAttributeConstraints:
+            MinLength: 2
+            MaxLength: 50
+        - Name: email
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+        - Name: phone_number
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+          StringAttributeConstraints:
+            MinLength: 5
+            MaxLength: 100
+      UsernameConfiguration:
+        CaseSensitive: False
+
+  GroceryListCognitoUserPoolWebClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref GroceryListCognitoUserPool
+      ClientName: grocery-list-user-pool-web-client
+      AccessTokenValidity: 1
+      TokenValidityUnits:
+        AccessToken: days
+        IdToken: days
+        RefreshToken: days
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthFlowsUserPoolClient: True
+      AllowedOAuthScopes:
+        - phone
+        - email
+        - openid
+        - profile
+      AuthSessionValidity: 15
+      CallbackURLs:
+        - http://localhost:5173
+      ExplicitAuthFlows:
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      RefreshTokenValidity: 60
+      SupportedIdentityProviders:
+        - COGNITO
