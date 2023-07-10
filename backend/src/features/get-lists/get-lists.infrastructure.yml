@@ -1,0 +1,16 @@
+functions:
+  'get-lists':
+    handler: dist/src/features/get-lists/index.handler
+    events:
+      - http:
+          path: '/lists'
+          method: 'get'
+          authorizer:
+            name: GroceryListAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - GroceryListCognitoUserPool
+                - Arn
+    environment:
+      DYNAMODB_TABLE_NAME: ${self:custom.variables.DYNAMODB_TABLE_NAME}
