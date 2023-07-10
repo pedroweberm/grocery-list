@@ -1,4 +1,5 @@
-import { CloudFormation, SharedIniFileCredentials } from 'aws-sdk';
+import { loadSharedConfigFiles } from '@aws-sdk/shared-ini-file-loader';
+import { CloudFormationClient, DescribeStackResourcesCommand } from '@aws-sdk/client-cloudformation';
 import axios, { AxiosInstance } from 'axios';
 
 import { describe, it } from 'mocha';
@@ -9,16 +10,20 @@ import { config } from '@src/config';
 
 use(chaiAsPromised);
 
-const credentials = new SharedIniFileCredentials({ profile: 'grocery-list-testing' });
-
-const cloudformation = new CloudFormation({
-  credentials,
-  region: config.awsRegion,
-});
-
 const getApiURL = async (stackName: string) => {
   try {
-    const resources = await cloudformation.describeStackResources({ StackName: stackName }).promise();
+    const rawCredentials = (await loadSharedConfigFiles()).credentialsFile['grocery-list-testing'];
+
+    const cloudformation = new CloudFormationClient({
+      credentials: {
+        accessKeyId: rawCredentials.aws_access_key_id ?? '',
+        secretAccessKey: rawCredentials.aws_secret_access_key ?? '',
+        sessionToken: rawCredentials.session_token,
+      },
+      region: config.awsRegion,
+    });
+
+    const resources = await cloudformation.send(new DescribeStackResourcesCommand({ StackName: stackName }));
 
     const apiResource = resources.StackResources?.find(resource => resource.LogicalResourceId === 'ApiGatewayRestApi');
 
@@ -36,8 +41,8 @@ const getApiURL = async (stackName: string) => {
   }
 };
 
-describe('Example end to end test', () => {
-  const stageName = process.env.STAGE_NAME;
+describe('Example integration test', () => {
+  const stageName = process.env.STAGE_NAME ?? 'dev';
   let httpClient: AxiosInstance;
 
   before(async () => {

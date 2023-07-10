@@ -48,7 +48,7 @@
   },
   "scripts": {
     "test:unit": "nyc ts-mocha --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/unit/**/*.ts'",
-    "test:e2e": "ts-mocha --timeout 10000 --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/e2e/**/*.ts'",
+    "test:integration": "ts-mocha --timeout 10000 --type-check --require tsconfig-paths/register -p tests/tsconfig.json 'tests/integration/**/*.ts'",
     "offline": "npm run build && npx serverless offline start --stage local",
     "build": "rimraf dist && tsc",
     "local": "npx nodemon --exec npm run offline",
