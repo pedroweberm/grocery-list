@@ -29,6 +29,8 @@ export const CreateListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => 
         sort_key: `list-item#${listItem.id}`,
         item_owner_id: listItem.ownerId,
         created_at_timestamp: listItem.createdAtTimestamp,
+        item_id: listItem.id,
+        item_list_id: listItem.listId,
         item_name: listItem.itemName,
         item_status: listItem.status,
       },
