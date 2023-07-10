@@ -5,6 +5,11 @@ import type { CognitoClient } from '@clients/cognito';
 import { config } from '@src/config';
 
 export const AddListMemberHandlerFactory = (dynamoDBClient: DynamoDBClient, cognitoClient: CognitoClient) => {
+  // const attributeMapToObject = (attributeMap: { [key: string]: { [key: string]: string } }) =>
+  //   Object.entries(attributeMap).reduce((acc, [key, value]) => {
+  //     return { ...acc, [key]: Object.values(value)[0] };
+  //   }, {});
+
   const handler = async (event: APIGatewayEvent) => {
     const body = JSON.parse(event.body ?? '{}');
     const listId = event.pathParameters?.listId;
@@ -43,7 +48,7 @@ export const AddListMemberHandlerFactory = (dynamoDBClient: DynamoDBClient, cogn
     const databaseResponse = await dynamoDBClient.put({
       TableName: config.dynamoDBTableName,
       Item: {
-        ...existingListMember,
+        ...(existingListMember.Items?.[0] ?? {}),
         partition_key: `list-member#${newMemberId}`,
         sort_key: `list#${listId}`,
       },
