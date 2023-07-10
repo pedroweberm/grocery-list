@@ -26,6 +26,7 @@ module.exports = async ({ resolveVariable }) => {
   switch (stage) {
     case 'local': {
       const variablesFromFile = await getEnvValuesFromFile(stage)
+
       validateVariables(variablesFromFile)
 
       return variablesFromFile;
@@ -33,14 +34,13 @@ module.exports = async ({ resolveVariable }) => {
     case 'dev': {
       const variablesFromFile = await getEnvValuesFromFile(stage)
       const customVariables = {
-        "DYNAMODB_TABLE_NAME": { Ref: 'GroceryListTable' }
+        "DYNAMODB_TABLE_NAME": { Ref: 'GroceryListTable' },
+        "COGNITO_USER_POOL_ID": { Ref: 'GroceryListCognitoUserPool' }
       }
       const variables = {
         ...variablesFromFile,
         ...customVariables
       }
-
-      console.log('resolved variables for stage', stage, variables)
 
       validateVariables(variables)
 

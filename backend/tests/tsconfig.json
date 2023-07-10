@@ -7,7 +7,8 @@
     "types": ["node", "mocha", "chai", "chai-as-promised"],
     "paths": {
       "@src/*": [ "../src/*" ],
-      "@features/*": [ "../src/features/*" ]
+      "@features/*": [ "../src/features/*" ],
+      "@clients/*": [ "../src/clients/*" ],
     }
   },
   "include": ["./**/*.ts", "./**/*.json", "../src"]

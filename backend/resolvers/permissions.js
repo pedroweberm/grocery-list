@@ -24,6 +24,13 @@ module.exports = async () => {
           ],
         },
       },
+      {
+        Effect: 'Allow',
+        Action: ['cognito-idp:AdminGetUser'],
+        Resource: {
+          'Fn::GetAtt': ['GroceryListCognitoUserPool', 'Arn']
+        }
+      }
     ],
   };
 };

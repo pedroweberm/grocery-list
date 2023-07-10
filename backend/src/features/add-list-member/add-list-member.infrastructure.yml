@@ -1,0 +1,21 @@
+functions:
+  'add-list-member':
+    handler: dist/src/features/add-list-member/index.handler
+    events:
+      - http:
+          path: '/lists/{id}/members'
+          method: 'post'
+          request:
+            parameters:
+              paths:
+                id: true
+          authorizer:
+            name: GroceryListAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - GroceryListCognitoUserPool
+                - Arn
+    environment:
+      DYNAMODB_TABLE_NAME: ${self:custom.variables.DYNAMODB_TABLE_NAME}
+      COGNITO_USER_POOL_ID: ${self:custom.variables.COGNITO_USER_POOL_ID}
