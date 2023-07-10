@@ -3,12 +3,12 @@ functions:
     handler: dist/src/features/create-list-item/index.handler
     events:
       - http:
-          path: '/lists/{id}/items'
+          path: '/lists/{listId}/items'
           method: 'post'
           request:
             parameters:
               paths:
-                id: true
+                listId: true
           authorizer:
             name: GroceryListAuthorizer
             type: COGNITO_USER_POOLS

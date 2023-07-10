@@ -3,12 +3,12 @@ functions:
     handler: dist/src/features/add-list-member/index.handler
     events:
       - http:
-          path: '/lists/{id}/members'
+          path: '/lists/{listId}/members'
           method: 'post'
           request:
             parameters:
               paths:
-                id: true
+                listId: true
           authorizer:
             name: GroceryListAuthorizer
             type: COGNITO_USER_POOLS

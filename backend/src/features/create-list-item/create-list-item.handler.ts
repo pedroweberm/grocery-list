@@ -7,7 +7,7 @@ import { config } from '@src/config';
 export const CreateListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
   const handler = async (event: APIGatewayEvent) => {
     const data = JSON.parse(event.body ?? '{}');
-    const listId = event.pathParameters?.['id'];
+    const listId = event.pathParameters?.listId;
 
     const listItem = {
       id: uuid(),

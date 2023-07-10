@@ -7,7 +7,7 @@ import { config } from '@src/config';
 export const AddListMemberHandlerFactory = (dynamoDBClient: DynamoDBClient, cognitoClient: CognitoClient) => {
   const handler = async (event: APIGatewayEvent) => {
     const body = JSON.parse(event.body ?? '{}');
-    const listId = event.pathParameters?.id;
+    const listId = event.pathParameters?.listId;
 
     const userId = event.requestContext.authorizer?.claims?.sub;
 
