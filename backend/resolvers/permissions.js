@@ -3,14 +3,14 @@ module.exports = async () => {
     statements: [
       {
         Effect: 'Allow',
-        Action: ['dynamodb:PutItem', 'dynamodb:Query'],
+        Action: ['dynamodb:PutItem', 'dynamodb:Query', 'dynamodb:UpdateItem'],
         Resource: {
           'Fn::GetAtt': ['GroceryListTable', 'Arn'],
         },
       },
       {
         Effect: 'Allow',
-        Action: ['dynamodb:PutItem', 'dynamodb:Query'],
+        Action: ['dynamodb:PutItem', 'dynamodb:Query', 'dynamodb:UpdateItem'],
         Resource: {
           'Fn::Join': [
             '',
