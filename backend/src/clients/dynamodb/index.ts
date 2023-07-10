@@ -1,6 +1,6 @@
 import type { DynamoDBClient as AWSSDKDynamoDBClient } from '@aws-sdk/client-dynamodb';
-import type { PutCommandInput, QueryCommandInput, UpdateCommandInput } from '@aws-sdk/lib-dynamodb';
-import { PutCommand, QueryCommand, UpdateCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import type { PutCommandInput, QueryCommandInput, UpdateCommandInput, DeleteCommandInput } from '@aws-sdk/lib-dynamodb';
+import { PutCommand, QueryCommand, UpdateCommand, DeleteCommand, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
 import type { LogClient } from '@clients/logger';
 
@@ -48,9 +48,24 @@ export function DynamoDBClientFactory(awsSdkDynamoDbClient: AWSSDKDynamoDBClient
     return response;
   }
 
+  async function deleteItem(params: DeleteCommandInput) {
+    const partitionKey = params.Key?.partition_key;
+    const sortKey = params?.Key?.sort_key;
+
+    logger.info(`[DynamoDBClient][Start] deleteItem(${params.TableName}, ${partitionKey}, ${sortKey})`);
+    logger.start(`[DynamoDBClient] deleteItem(${params.TableName}, ${partitionKey}, ${sortKey})`);
+    const command = new DeleteCommand(params);
+    const response = await documentClient.send(command);
+    logger.start(`[DynamoDBClient] deleteItem(${params.TableName}, ${partitionKey}, ${sortKey})`);
+    logger.info(`[DynamoDBClient][End] deleteItem(${params.TableName}, ${partitionKey}, ${sortKey})`);
+
+    return response;
+  }
+
   return {
     put,
     query,
     update,
+    deleteItem,
   };
 }
