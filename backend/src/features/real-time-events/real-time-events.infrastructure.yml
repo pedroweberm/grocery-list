@@ -1,8 +1,4 @@
 resources:
-  GroceryListIotThing:
-    Type: 'AWS::IoT::Thing'
-    Properties:
-      ThingName: grocery-list-iot-thing-${self:provider.stage}
   IotConnectorRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -33,8 +29,7 @@ resources:
                   - 'iot:UpdateThingShadow'
                   - 'iot:DeleteThingShadow'
                   - 'iot:ListNamedShadowsForThing'
-                Resource:
-                  - !GetAtt GroceryListIotThing.Arn
+                Resource: '*'
 
 functions:
   'get-presigned-url':
@@ -43,6 +38,7 @@ functions:
       - http:
           path: '/lists/{listId}/presigned-url'
           method: 'get'
+          cors: true
           request:
             parameters:
               paths:

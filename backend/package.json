@@ -8,7 +8,9 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.363.0",
     "@aws-sdk/client-dynamodb": "^3.363.0",
     "@aws-sdk/lib-dynamodb": "^3.365.0",
+    "@aws-sdk/protocol-http": "^3.369.0",
     "@aws-sdk/signature-v4": "^3.357.0",
+    "@aws-sdk/util-format-url": "^3.369.0",
     "superstruct": "^1.0.3",
     "tslib": "^2.0.1",
     "uuid": "^8.3.2"
