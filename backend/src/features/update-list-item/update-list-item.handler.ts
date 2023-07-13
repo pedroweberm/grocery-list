@@ -51,7 +51,7 @@ export const UpdateListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => 
     console.log('response', databaseResponse);
 
     return {
-      statusCode: 202,
+      statusCode: 204,
       body: JSON.stringify({
         success: true,
         message: 'List item updated successfully',

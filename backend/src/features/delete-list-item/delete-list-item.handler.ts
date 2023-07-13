@@ -23,7 +23,7 @@ export const DeleteListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => 
     console.log('response', databaseResponse);
 
     return {
-      statusCode: 200,
+      statusCode: 204,
       body: JSON.stringify({
         success: true,
         message: 'Item deleted successfully',
