@@ -30,6 +30,11 @@ module.exports = async () => {
         Resource: {
           'Fn::GetAtt': ['GroceryListCognitoUserPool', 'Arn']
         }
+      },
+      {
+        Effect: 'Allow',
+        Action: ['iot:Connect','iot:Publish'],
+        Resource: "*"
       }
     ],
   };

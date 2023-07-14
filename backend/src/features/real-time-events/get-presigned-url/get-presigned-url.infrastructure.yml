@@ -33,7 +33,7 @@ resources:
 
 functions:
   'get-presigned-url':
-    handler: dist/src/features/real-time-events/index.handler
+    handler: dist/src/features/real-time-events/get-presigned-url/index.handler
     events:
       - http:
           path: '/lists/{listId}/presigned-url'

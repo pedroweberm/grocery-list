@@ -53,7 +53,7 @@ const createPresignedURL = async ({
   return formatUrl(signedRequest);
 };
 
-export const RealTimeEventsHandlerFactory = () => {
+export const GetPresignedUrlHandlerFactory = () => {
   const handler = async (_event: APIGatewayEvent) => {
     const response = await new STSClient({}).send(
       new AssumeRoleCommand({
