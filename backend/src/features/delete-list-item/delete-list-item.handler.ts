@@ -24,6 +24,10 @@ export const DeleteListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => 
 
     return {
       statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify({
         success: true,
         message: 'Item deleted successfully',

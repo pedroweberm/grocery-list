@@ -5,6 +5,7 @@ functions:
       - http:
           path: '/lists'
           method: 'post'
+          cors: true
           authorizer:
             name: GroceryListAuthorizer
             type: COGNITO_USER_POOLS

@@ -5,6 +5,7 @@ functions:
       - http:
           path: '/lists/{listId}/members'
           method: 'post'
+          cors: true
           request:
             parameters:
               paths:

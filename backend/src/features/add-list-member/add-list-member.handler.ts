@@ -5,11 +5,6 @@ import type { CognitoClient } from '@clients/cognito';
 import { config } from '@src/config';
 
 export const AddListMemberHandlerFactory = (dynamoDBClient: DynamoDBClient, cognitoClient: CognitoClient) => {
-  // const attributeMapToObject = (attributeMap: { [key: string]: { [key: string]: string } }) =>
-  //   Object.entries(attributeMap).reduce((acc, [key, value]) => {
-  //     return { ...acc, [key]: Object.values(value)[0] };
-  //   }, {});
-
   const handler = async (event: APIGatewayEvent) => {
     const body = JSON.parse(event.body ?? '{}');
     const listId = event.pathParameters?.listId;
@@ -58,6 +53,10 @@ export const AddListMemberHandlerFactory = (dynamoDBClient: DynamoDBClient, cogn
 
     return {
       statusCode: 201,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify({
         success: true,
         message: 'Member added successfully',

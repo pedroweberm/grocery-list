@@ -28,6 +28,7 @@ export const CreateListHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
         list_owner_id: list.ownerId,
         created_at_timestamp: list.createdAtTimestamp,
         list_name: list.name,
+        entity: 'list-member',
       },
     });
 
@@ -35,6 +36,10 @@ export const CreateListHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
 
     return {
       statusCode: 201,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify({
         success: true,
         message: 'List created successfully',
