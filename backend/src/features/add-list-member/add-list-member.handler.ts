@@ -1,69 +1,34 @@
-import type { APIGatewayEvent } from 'aws-lambda';
+import type { LogClient } from '@clients/logger';
+import { APIGatewayEvent } from 'aws-lambda';
 
-import type { DynamoDBClient } from '@clients/dynamodb';
-import type { CognitoClient } from '@clients/cognito';
-import { config } from '@src/config';
+import { AddListMemberController } from './add-list-member.controller';
 
-export const AddListMemberHandlerFactory = (dynamoDBClient: DynamoDBClient, cognitoClient: CognitoClient) => {
+export function AddListMemberHandlerFactory(controller: AddListMemberController, logger: LogClient) {
   const handler = async (event: APIGatewayEvent) => {
-    const body = JSON.parse(event.body ?? '{}');
-    const listId = event.pathParameters?.listId;
-
-    const userId = event.requestContext.authorizer?.claims?.sub;
-
-    if (!userId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'Could not find user id' }) };
+    const requestId = event?.headers?.['requestId'];
+    if (requestId) {
+      logger.setRequestId(requestId);
     }
 
-    if (!listId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'Could not find list id' }) };
-    }
+    const data = {
+      ...(event?.queryStringParameters || {}),
+      ...JSON.parse(event?.body || '{}'),
+      ...(event?.pathParameters || {}),
+      userId: event.requestContext.authorizer?.claims.sub,
+    };
 
-    const existingListMember = await dynamoDBClient.query({
-      TableName: config.dynamoDBTableName,
-      KeyConditionExpression: 'partition_key=:partition_key and sort_key=:sort_key',
-      ExpressionAttributeValues: {
-        ':partition_key': `list-member#${userId}`,
-        ':sort_key': `list#${listId}`,
-      },
-    });
-
-    if (existingListMember.Count === 0) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'Only existing list members can add new members' }) };
-    }
-
-    const newMember = await cognitoClient.adminGetUser({ UserPoolId: config.cognitoUserPoolId, Username: body.username });
-
-    if (!newMember) {
-      return { statusCode: 404, body: JSON.stringify({ success: false, message: `Could not find user with username ${body.username}` }) };
-    }
-
-    const newMemberId = newMember.UserAttributes?.find(attribute => attribute.Name === 'sub')?.Value;
-
-    const databaseResponse = await dynamoDBClient.put({
-      TableName: config.dynamoDBTableName,
-      Item: {
-        ...(existingListMember.Items?.[0] ?? {}),
-        partition_key: `list-member#${newMemberId}`,
-        sort_key: `list#${listId}`,
-      },
-    });
-
-    console.log('response', databaseResponse);
+    const response = await controller.addListMember(data);
 
     return {
-      statusCode: 201,
+      statusCode: response.status,
+      body: JSON.stringify(response.body ?? {}),
       headers: {
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'Member added successfully',
-        data: databaseResponse.Attributes,
-      }),
     };
   };
 
   return { handler };
-};
+}
