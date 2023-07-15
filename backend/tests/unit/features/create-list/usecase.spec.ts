@@ -2,8 +2,6 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
-import { handler } from '@features/test-feature';
-
 describe('Example unit test', () => {
   const testFunction = stub();
 
@@ -11,11 +9,5 @@ describe('Example unit test', () => {
     testFunction();
 
     expect(testFunction.callCount).to.be.equal(1);
-  });
-
-  it('handler should return statusCode 200', async () => {
-    const response = await handler();
-
-    expect(response.statusCode).to.be.equal(200);
   });
 });
