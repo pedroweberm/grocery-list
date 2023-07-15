@@ -38,7 +38,7 @@ export function DeleteListItemControllerFactory(usecase: DeleteListItemUsecase, 
         body: {
           success: true,
           message: 'List item deleted successfully',
-          data: response,
+          data: response.data,
         },
       };
     } catch (err: unknown) {

@@ -37,7 +37,7 @@ export function CreateListControllerFactory(usecase: CreateListUsecase, logger: 
         body: {
           success: true,
           message: 'List created successfully',
-          data: response,
+          data: response.data,
         },
       };
     } catch (err: unknown) {

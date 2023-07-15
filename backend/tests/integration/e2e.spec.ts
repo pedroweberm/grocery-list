@@ -215,7 +215,6 @@ describe('Testing end to end flow', () => {
       const response = await httpClient.post(requests.createList.endpoint, requests.createList.input);
 
       requests.createList.output = response.data.data;
-      console.log('response was', response.data);
 
       expect(response.status).to.be.equal(201);
     });

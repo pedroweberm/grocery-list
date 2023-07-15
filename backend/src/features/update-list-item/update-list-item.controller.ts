@@ -44,7 +44,7 @@ export function UpdateListItemControllerFactory(usecase: UpdateListItemUsecase, 
         body: {
           success: true,
           message: 'List item updated successfully',
-          data: response,
+          data: response.data,
         },
       };
     } catch (err: unknown) {

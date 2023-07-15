@@ -38,7 +38,7 @@ export function AddListMemberControllerFactory(usecase: AddListMemberUsecase, lo
         body: {
           success: true,
           message: 'Member added successfully',
-          data: response,
+          data: response.data,
         },
       };
     } catch (err: unknown) {

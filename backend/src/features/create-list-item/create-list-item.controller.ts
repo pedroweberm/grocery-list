@@ -38,7 +38,7 @@ export function CreateListItemControllerFactory(usecase: CreateListItemUsecase, 
         body: {
           success: true,
           message: 'List item created successfully',
-          data: response,
+          data: response.data,
         },
       };
     } catch (err: unknown) {
