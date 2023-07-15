@@ -36,7 +36,7 @@ export function GetListsControllerFactory(usecase: GetListsUsecase, logger: LogC
         body: {
           success: true,
           message: 'List retrieved successfully',
-          data: response,
+          data: response.data,
         },
       };
     } catch (err: unknown) {
