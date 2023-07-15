@@ -1,42 +1,32 @@
-import type { APIGatewayEvent } from 'aws-lambda';
+import type { LogClient } from '@clients/logger';
+import { APIGatewayEvent } from 'aws-lambda';
 
-import type { DynamoDBClient } from '@clients/dynamodb';
-import { config } from '@src/config';
+import { DeleteListItemController } from './delete-list-item.controller';
 
-export const DeleteListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
+export function DeleteListItemHandlerFactory(controller: DeleteListItemController, logger: LogClient) {
   const handler = async (event: APIGatewayEvent) => {
-    const listId = event.pathParameters?.['listId'];
-    const itemId = event.pathParameters?.['itemId'];
-
-    if (!listId || !itemId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'List id and item id are required' }) };
+    const requestId = event?.headers?.['requestId'];
+    if (requestId) {
+      logger.setRequestId(requestId);
     }
 
-    const databaseResponse = await dynamoDBClient.deleteItem({
-      TableName: config.dynamoDBTableName,
-      Key: {
-        partition_key: `list#${listId}`,
-        sort_key: `list-item#${itemId}`,
-      },
-    });
+    const data = {
+      ...(event?.pathParameters || {}),
+      userId: event.requestContext.authorizer?.claims.sub,
+    };
 
-    console.log('response', databaseResponse);
+    const response = await controller.deleteListItem(data);
 
     return {
-      statusCode: 204,
+      statusCode: response.status,
+      body: JSON.stringify(response.body ?? {}),
       headers: {
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'Item deleted successfully',
-        data: {
-          id: itemId,
-        },
-      }),
     };
   };
 
   return { handler };
-};
+}

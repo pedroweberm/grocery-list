@@ -1,49 +1,32 @@
-import type { APIGatewayEvent } from 'aws-lambda';
+import type { LogClient } from '@clients/logger';
+import { APIGatewayEvent } from 'aws-lambda';
 
-import type { DynamoDBClient } from '@clients/dynamodb';
-import { config } from '@src/config';
+import { GetListItemsController } from './get-list-items.controller';
 
-export const GetListItemsHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
+export function GetListItemsHandlerFactory(controller: GetListItemsController, logger: LogClient) {
   const handler = async (event: APIGatewayEvent) => {
-    const listId = event.pathParameters?.['listId'];
-
-    if (!listId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'List id is required' }) };
+    const requestId = event?.headers?.['requestId'];
+    if (requestId) {
+      logger.setRequestId(requestId);
     }
 
-    const databaseResponse = await dynamoDBClient.query({
-      TableName: config.dynamoDBTableName,
-      KeyConditionExpression: 'partition_key=:partition_key and begins_with(sort_key, :sort_key)',
-      ExpressionAttributeValues: {
-        ':partition_key': `list#${listId}`,
-        ':sort_key': 'list-item',
-      },
-    });
+    const data = {
+      ...(event?.pathParameters || {}),
+      userId: event.requestContext.authorizer?.claims.sub,
+    };
 
-    console.log('response', databaseResponse);
-
-    const items = databaseResponse.Items?.map(databaseItem => ({
-      id: databaseItem['item_id'],
-      name: databaseItem['item_name'],
-      status: databaseItem['item_status'],
-      ownerId: databaseItem['item_owner_id'],
-      listId: databaseItem['item_list_id'],
-      createdAtTimestamp: databaseItem['created_at_timestamp'],
-    }));
+    const response = await controller.getListItems(data);
 
     return {
-      statusCode: 200,
+      statusCode: response.status,
+      body: JSON.stringify(response.body ?? {}),
       headers: {
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'Items retrieved successfully',
-        data: items,
-      }),
     };
   };
 
   return { handler };
-};
+}

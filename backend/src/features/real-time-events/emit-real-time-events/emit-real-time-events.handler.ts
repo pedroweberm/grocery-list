@@ -1,25 +1,12 @@
-import type { AttributeValue, DynamoDBStreamEvent } from 'aws-lambda';
+import type { DynamoDBStreamEvent } from 'aws-lambda';
 import { PublishCommand, IoTDataPlaneClient } from '@aws-sdk/client-iot-data-plane';
+
+import { DatabaseListItem } from '@features/create-list-item/create-list-item.repository';
+import { attributeMapToObject } from '@src/helpers/dynamodb';
 
 const iotClient = new IoTDataPlaneClient({});
 
-type DatabaseListItem = {
-  partition_key: string;
-  sort_key: string;
-  item_owner_id: string;
-  created_at_timestamp: string;
-  item_id: string;
-  item_list_id: string;
-  item_name: string;
-  item_status: string;
-};
-
 export const EmitRealTimeEventsHandlerFactory = () => {
-  const attributeMapToObject = <T extends { [key: string]: unknown }>(attributeMap: { [key: string]: AttributeValue }): T =>
-    Object.entries(attributeMap).reduce((acc, [key, value]) => {
-      return { ...acc, [key]: Object.values(value)[0] };
-    }, {} as T);
-
   const eventMapper = {
     INSERT: 'item-created',
     MODIFY: 'item-updated',
@@ -40,12 +27,27 @@ export const EmitRealTimeEventsHandlerFactory = () => {
         return { succes: false, message: 'Not enough data to emit event' };
       }
 
-      const item = attributeMapToObject<DatabaseListItem>(record.dynamodb?.NewImage ? record.dynamodb?.NewImage : record.dynamodb?.OldImage ?? {});
+      const databaseItem = attributeMapToObject<DatabaseListItem>(
+        record.dynamodb?.NewImage ? record.dynamodb?.NewImage : record.dynamodb?.OldImage ?? {},
+      );
 
-      const listId = item?.['item_list_id'];
+      const item = {
+        id: databaseItem['item_id'],
+        name: databaseItem['item_name'],
+        status: databaseItem['item_status'],
+        ownerId: databaseItem['item_owner_id'],
+        listId: databaseItem['item_list_id'],
+        createdAtTimestamp: databaseItem['created_at_timestamp'],
+      };
 
-      const topic = `lists/${listId}/${eventMapper[event.Records[0].eventName ?? 'DEFAULT']}`;
-      const payload = JSON.stringify(item);
+      const listId = item?.listId;
+
+      const event = eventMapper[record.eventName ?? 'DEFAULT'];
+      const topic = `lists/${listId}/${event}`;
+      const payload = JSON.stringify({
+        event,
+        data: item,
+      });
 
       console.log(`Sending payload ${payload} to topic ${topic}`);
 

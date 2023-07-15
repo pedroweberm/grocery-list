@@ -5,14 +5,6 @@ import { AddListMemberErrorCodes } from './add-list-member.errors';
 
 export type AddListMemberUsecase = ReturnType<typeof AddListMemberUsecaseFactory>;
 
-export interface ListMember {
-  listId: string;
-  listOwnerId: string;
-  createdAtTimestamp: number;
-  listName: string;
-  memberId: string;
-}
-
 export const AddListMemberUsecaseFactory = (repository: AddListMemberRepository) => {
   const execute = async ({ username, listId, userId }: { username: string; listId: string; userId: string }) => {
     const existingListMember = await repository.findListMember(listId, userId);

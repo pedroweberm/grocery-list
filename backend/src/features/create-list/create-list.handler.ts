@@ -1,52 +1,32 @@
-import type { APIGatewayEvent } from 'aws-lambda';
-import { v4 as uuid } from 'uuid';
+import type { LogClient } from '@clients/logger';
+import { APIGatewayEvent } from 'aws-lambda';
 
-import { DynamoDBClient } from '@clients/dynamodb';
-import { config } from '@src/config';
+import { CreateListController } from './create-list.controller';
 
-export const CreateListHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
+export function CreateListHandlerFactory(controller: CreateListController, logger: LogClient) {
   const handler = async (event: APIGatewayEvent) => {
-    const data = JSON.parse(event.body ?? '{}');
-
-    const list = {
-      id: uuid(),
-      ownerId: event.requestContext.authorizer?.claims?.sub,
-      createdAtTimestamp: new Date().getTime(),
-      name: data.name,
-    };
-
-    if (!list.ownerId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'Could not find user id' }) };
+    const requestId = event?.headers?.['requestId'];
+    if (requestId) {
+      logger.setRequestId(requestId);
     }
 
-    const databaseResponse = await dynamoDBClient.put({
-      TableName: config.dynamoDBTableName,
-      Item: {
-        partition_key: `list-member#${list.ownerId}`,
-        sort_key: `list#${list.id}`,
-        list_id: list.id,
-        list_owner_id: list.ownerId,
-        created_at_timestamp: list.createdAtTimestamp,
-        list_name: list.name,
-        entity: 'list-member',
-      },
-    });
+    const data = {
+      ...JSON.parse(event?.body || '{}'),
+      userId: event.requestContext.authorizer?.claims.sub,
+    };
 
-    console.log('response', databaseResponse);
+    const response = await controller.createList(data);
 
     return {
-      statusCode: 201,
+      statusCode: response.status,
+      body: JSON.stringify(response.body ?? {}),
       headers: {
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'List created successfully',
-        data: list,
-      }),
     };
   };
 
   return { handler };
-};
+}

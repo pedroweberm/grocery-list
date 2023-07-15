@@ -1,47 +1,31 @@
-import type { APIGatewayEvent } from 'aws-lambda';
+import type { LogClient } from '@clients/logger';
+import { APIGatewayEvent } from 'aws-lambda';
 
-import type { DynamoDBClient } from '@clients/dynamodb';
-import { config } from '@src/config';
+import { GetListsController } from './get-lists.controller';
 
-export const GetListsHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
+export function GetListsHandlerFactory(controller: GetListsController, logger: LogClient) {
   const handler = async (event: APIGatewayEvent) => {
-    const userId = event.requestContext.authorizer?.claims?.sub;
-
-    if (!userId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'Could not find user id' }) };
+    const requestId = event?.headers?.['requestId'];
+    if (requestId) {
+      logger.setRequestId(requestId);
     }
 
-    const databaseResponse = await dynamoDBClient.query({
-      TableName: config.dynamoDBTableName,
-      KeyConditionExpression: 'partition_key=:partition_key and begins_with(sort_key, :sort_key)',
-      ExpressionAttributeValues: {
-        ':partition_key': `list-member#${userId}`,
-        ':sort_key': `list`,
-      },
-    });
+    const data = {
+      userId: event.requestContext.authorizer?.claims.sub,
+    };
 
-    console.log('response', databaseResponse);
-
-    const lists = databaseResponse.Items?.map(databaseList => ({
-      id: databaseList['list_id'],
-      name: databaseList['list_name'],
-      ownerId: databaseList['list_owner_id'],
-      createdAtTimestamp: databaseList['created_at_timestamp'],
-    }));
+    const response = await controller.getListItems(data);
 
     return {
-      statusCode: 200,
+      statusCode: response.status,
+      body: JSON.stringify(response.body ?? {}),
       headers: {
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'Lists retrieved successfully',
-        data: lists,
-      }),
     };
   };
 
   return { handler };
-};
+}

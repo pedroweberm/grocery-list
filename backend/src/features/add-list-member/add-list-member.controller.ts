@@ -34,7 +34,7 @@ export function AddListMemberControllerFactory(usecase: AddListMemberUsecase, lo
       const response = await usecase.execute(validated);
 
       return {
-        status: 200,
+        status: 201,
         body: {
           success: true,
           message: 'Member added successfully',

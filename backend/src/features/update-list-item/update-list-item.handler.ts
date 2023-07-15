@@ -1,68 +1,33 @@
-import type { APIGatewayEvent } from 'aws-lambda';
+import type { LogClient } from '@clients/logger';
+import { APIGatewayEvent } from 'aws-lambda';
 
-import { DynamoDBClient } from '@clients/dynamodb';
-import { config } from '@src/config';
+import { UpdateListItemController } from './update-list-item.controller';
 
-export const UpdateListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
-  const getUpdateAttributes = (data: { name?: string; status?: string }) => ({
-    item_name: data.name,
-    item_status: data.status,
-  });
-
-  const buildUpdateExpression = (attributes: { [key: string]: string | undefined }) =>
-    Object.entries(attributes)
-      .reduce((acc, [key, value]) => {
-        return value ? `${acc} ${key}=:${key},` : acc;
-      }, 'set')
-      .slice(0, -1);
-
-  const buildUpdateExpressionAttributeValues = (attributes: { [key: string]: string | undefined }) =>
-    Object.entries(attributes).reduce((acc, [key, value]) => {
-      return value ? { ...acc, [`:${key}`]: value } : acc;
-    }, {});
-
+export function UpdateListItemHandlerFactory(controller: UpdateListItemController, logger: LogClient) {
   const handler = async (event: APIGatewayEvent) => {
-    const data = JSON.parse(event.body ?? '{}');
-
-    const listId = event.pathParameters?.listId;
-    const itemId = event.pathParameters?.itemId;
-
-    if (!listId || !itemId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'List id and item id are required' }) };
+    const requestId = event?.headers?.['requestId'];
+    if (requestId) {
+      logger.setRequestId(requestId);
     }
 
-    const updatedItemAttributes = getUpdateAttributes(data);
+    const data = {
+      ...JSON.parse(event?.body || '{}'),
+      ...(event?.pathParameters || {}),
+      userId: event.requestContext.authorizer?.claims.sub,
+    };
 
-    if (!updatedItemAttributes.item_name && !updatedItemAttributes.item_status) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'At least one attribute must be updated' }) };
-    }
-
-    const databaseResponse = await dynamoDBClient.update({
-      TableName: config.dynamoDBTableName,
-      Key: {
-        partition_key: `list#${listId}`,
-        sort_key: `list-item#${itemId}`,
-      },
-      UpdateExpression: buildUpdateExpression(updatedItemAttributes),
-      ExpressionAttributeValues: buildUpdateExpressionAttributeValues(updatedItemAttributes),
-      ConditionExpression: 'attribute_exists(partition_key) and attribute_exists(sort_key)',
-    });
-
-    console.log('response', databaseResponse);
+    const response = await controller.updateListItem(data);
 
     return {
-      statusCode: 204,
+      statusCode: response.status,
+      body: JSON.stringify(response.body ?? {}),
       headers: {
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'List item updated successfully',
-        data,
-      }),
     };
   };
 
   return { handler };
-};
+}

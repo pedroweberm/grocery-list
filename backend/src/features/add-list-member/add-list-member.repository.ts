@@ -5,20 +5,10 @@ import type { CognitoClient } from '@clients/cognito';
 import { DatabaseEntityNames } from '@src/helpers/constants';
 import { config } from '@src/config';
 
-import type { ListMember } from './add-list-member.usecase';
+import type { ListMember } from '@features/create-list/create-list.usecase';
+import { CreateListRepositoryFactory, DatabaseListMember } from '@features/create-list/create-list.repository';
 
 export type AddListMemberRepository = ReturnType<typeof AddListMemberRepositoryFactory>;
-
-export interface DatabaseListMember {
-  partition_key: string;
-  sort_key: string;
-  list_id: string;
-  list_owner_id: string;
-  created_at_timestamp: number;
-  list_name: string;
-  list_member_id: string;
-  entity: string;
-}
 
 export function AddListMemberRepositoryFactory(dynamoDBClient: DynamoDBClient, cognitoClient: CognitoClient) {
   const databaseListMemberToDomain = (databaseListMember: DatabaseListMember): ListMember => ({
@@ -27,17 +17,6 @@ export function AddListMemberRepositoryFactory(dynamoDBClient: DynamoDBClient, c
     listOwnerId: databaseListMember.list_owner_id,
     memberId: databaseListMember.list_member_id,
     createdAtTimestamp: databaseListMember.created_at_timestamp,
-  });
-
-  const listMemberToDatabase = (listMember: ListMember): DatabaseListMember => ({
-    partition_key: `${DatabaseEntityNames.ListMember}#${listMember.memberId}`,
-    sort_key: `${DatabaseEntityNames.List}#${listMember.listId}`,
-    list_id: listMember.listId,
-    list_owner_id: listMember.listOwnerId,
-    created_at_timestamp: listMember.createdAtTimestamp,
-    list_name: listMember.listName,
-    list_member_id: listMember.memberId,
-    entity: DatabaseEntityNames.ListMember,
   });
 
   const findListMember = async (listId: string, userId: string) => {
@@ -66,14 +45,5 @@ export function AddListMemberRepositoryFactory(dynamoDBClient: DynamoDBClient, c
     return cognitoAttributesToObject(response.UserAttributes ?? []) as { sub: string };
   };
 
-  const createListMember = async (data: ListMember) => {
-    const response = await dynamoDBClient.put({
-      TableName: config.dynamoDBTableName,
-      Item: listMemberToDatabase(data),
-    });
-
-    return response;
-  };
-
-  return { findListMember, findUserByUsername, createListMember };
+  return { findListMember, findUserByUsername, createListMember: CreateListRepositoryFactory(dynamoDBClient).createListMember };
 }
