@@ -20,13 +20,10 @@ use(chaiAsPromised);
 
 const getResourcesForStage = async (stageName: string) => {
   try {
-    const rawCredentials = (await loadSharedConfigFiles()).credentialsFile['grocery-list-testing'];
-
     const cloudformation = new CloudFormationClient({
       credentials: {
-        accessKeyId: rawCredentials.aws_access_key_id ?? '',
-        secretAccessKey: rawCredentials.aws_secret_access_key ?? '',
-        sessionToken: rawCredentials.session_token,
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? '',
       },
       region: config.awsRegion,
     });
