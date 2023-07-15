@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "esModuleInterop": true,
+    "target": "es6",
+    "lib": ["es2019", "es2020"],
+    "sourceMap": false,
+    "composite": true,
+    "strict": true,
+    "baseUrl": "./",
+    "outDir": "dist",
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "typeRoots": ["node_modules/@types"],
+    "paths": {
+      "@src/*": [ "./src/*" ],
+      "@features/*": [ "./src/features/*" ],
+      "@clients/*": [ "./src/clients/*" ],
+    }
+  },
+  "include": ["./src/**/*.ts", "./src/**/*.json", "tests/tsconfig.json"],
+  "exclude": ["./dist", "./resolvers", "./tests"]
+}

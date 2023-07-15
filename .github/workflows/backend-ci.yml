@@ -1,0 +1,102 @@
+name: CI-backend
+
+on:
+  pull_request:
+    branches: [develop, testing, master]
+    paths:
+      - backend/**
+
+env:
+  node_version: 18
+  base_folder: backend
+  aws_profile_name: grocery-list-testing
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
+
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d .backend/node_modules ]; then
+            cd ${{ env.base_folder }}
+            npm i
+          fi
+
+      - name: Run lint
+        run: cd ${{ env.base_folder }} && npm run lint
+
+  Unit-Test:
+    needs: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
+
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d ./node_modules ]; then
+            cd ${{ env.base_folder }}
+            npm i
+          fi
+
+      - name: Run unit tests
+        run: cd ${{ env.base_folder }} && npm run test:unit
+
+  Integration-Test:
+    needs: Unit-Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js v${{ env.node_version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.base_folder }}/package-lock.json
+
+      - name: Install NPM dependencies
+        run: |
+          if [ ! -d ./node_modules ]; then
+            cd ${{ env.base_folder }}
+            npm i
+          fi
+
+      - name: Setup AWS Credentials
+        run: |
+          npx serverless config credentials \
+          --provider aws \
+          --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
+          --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+          --overwrite
+
+      - name: Deploy to temporary environment
+        run: |
+          echo "STAGE_NAME=pr-${{github.event.number}}" >> $GITHUB_ENV
+          cd ${{ env.base_folder }} && npm run deploy -- --stage=pr-${{github.event.number}}
+
+      - name: Run integration test
+        run: cd ${{ env.base_folder }} && env AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} STAGE_NAME=pr-${{github.event.number}} npm run test:integration
+
+      - name: Remove temporary environment
+        if: always()
+        run: |
+          cd ${{ env.base_folder }} && npm run remove -- --stage=pr-${{github.event.number}}

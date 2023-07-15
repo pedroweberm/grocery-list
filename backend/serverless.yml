@@ -1,0 +1,35 @@
+service: grocery-list-backend
+frameworkVersion: '3'
+configValidationMode: error
+
+custom:
+  runningStage: '${opt:stage, self:provider.stage}'
+  bundle:
+    tsConfig: './tsconfig.json'
+  variables: '${file(./resolvers/environment-variables.js)}'
+
+plugins:
+  - serverless-offline
+  - serverless-bundle
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: "${opt:stage, 'dev'}"
+  region: us-east-1
+  deploymentBucket:
+    blockPublicAccess: true
+  iam:
+    role: ${file(./resolvers/permissions.js)}
+  environment:
+    NODE_ENV: '${self:custom.variables.NODE_ENV}'
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+
+resources:
+  Resources: ${file(./resolvers/resources.js)}
+
+package:
+  individually: true
+  excludeDevDependencies: true
+
+functions: ${file(./resolvers/functions.js)}
