@@ -59,6 +59,7 @@ module.exports = async ({ resolveVariable }) => {
     case 'pr': {
       const variablesFromFile = await getEnvValuesFromFile(stage);
       const customVariables = {
+        NODE_ENV: stage,
         DYNAMODB_TABLE_NAME: { Ref: 'GroceryListTable' },
         COGNITO_USER_POOL_ID: { Ref: 'GroceryListCognitoUserPool' },
         IOT_CONNECTOR_ROLE_ARN: { 'Fn::GetAtt': ['IotConnectorRole', 'Arn'] },
@@ -76,6 +77,7 @@ module.exports = async ({ resolveVariable }) => {
     case 'testing': {
       const variablesFromFile = await getEnvValuesFromFile(stage);
       const customVariables = {
+        NODE_ENV: stage,
         DYNAMODB_TABLE_NAME: { Ref: 'GroceryListTable' },
         COGNITO_USER_POOL_ID: { Ref: 'GroceryListCognitoUserPool' },
         IOT_CONNECTOR_ROLE_ARN: { 'Fn::GetAtt': ['IotConnectorRole', 'Arn'] },
@@ -93,6 +95,7 @@ module.exports = async ({ resolveVariable }) => {
     case 'production': {
       const variablesFromFile = await getEnvValuesFromFile(stage);
       const customVariables = {
+        NODE_ENV: stage,
         DYNAMODB_TABLE_NAME: { Ref: 'GroceryListTable' },
         COGNITO_USER_POOL_ID: { Ref: 'GroceryListCognitoUserPool' },
         IOT_CONNECTOR_ROLE_ARN: { 'Fn::GetAtt': ['IotConnectorRole', 'Arn'] },
