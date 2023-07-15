@@ -1,4 +1,3 @@
-import { loadSharedConfigFiles } from '@aws-sdk/shared-ini-file-loader';
 import { CloudFormationClient, DescribeStackResourcesCommand, StackResource } from '@aws-sdk/client-cloudformation';
 import {
   CognitoIdentityProviderClient,
