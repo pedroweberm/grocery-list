@@ -4,9 +4,16 @@ import { DynamoDBClientFactory } from '@clients/dynamodb';
 import { LoggerFactory } from '@clients/logger';
 import { config } from '@src/config';
 
-import { DeleteListItemHandlerFactory } from '@features/delete-list-item/delete-list-item.handler';
+import { DeleteListItemRepositoryFactory } from './delete-list-item.repository';
+import { DeleteListItemUsecaseFactory } from './delete-list-item.usecase';
+import { DeleteListItemControllerFactory } from './delete-list-item.controller';
+import { DeleteListItemHandlerFactory } from './delete-list-item.handler';
 
 const logger = LoggerFactory(config.serviceName, config.activeEnv);
 const dynamoDbClient = DynamoDBClientFactory(new DynamoDBClient({}), logger);
 
-export const { handler } = DeleteListItemHandlerFactory(dynamoDbClient);
+const repository = DeleteListItemRepositoryFactory(dynamoDbClient);
+const usecase = DeleteListItemUsecaseFactory(repository);
+const controller = DeleteListItemControllerFactory(usecase, logger);
+
+export const { handler } = DeleteListItemHandlerFactory(controller, logger);

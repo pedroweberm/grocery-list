@@ -237,7 +237,7 @@ describe('Testing end to end flow', () => {
 
     it('endpoint should return list that was created previously and have all expected fields', async () => {
       const list: { createdAtTimestamp: string; id: string; name: string; ownerId: string } = requests.getLists.output.find(
-        (list: { createdAtTimestamp: string; id: string; name: string; ownerId: string }) => list.id === requests.createList.output.id,
+        (list: { createdAtTimestamp: string; id: string; name: string; ownerId: string }) => list.id === requests.createList.output.listId,
       );
 
       expect(list).to.not.equal(undefined);
@@ -251,7 +251,7 @@ describe('Testing end to end flow', () => {
   describe('Testing list sharing', () => {
     it('endpoint should return status code UNAUTHORIZED for invalid token', async () => {
       const response = await httpClient.post(
-        replacePathParameters(requests.addListMember.endpoint, { listId: requests.createList.output.id }),
+        replacePathParameters(requests.addListMember.endpoint, { listId: requests.createList.output.listId }),
         requests.addListMember.input,
         { headers: invalidHeaders },
       );
@@ -261,7 +261,7 @@ describe('Testing end to end flow', () => {
 
     it('endpoint should return status code CREATED for valid request', async () => {
       const response = await httpClient.post(
-        replacePathParameters(requests.addListMember.endpoint, { listId: requests.createList.output.id }),
+        replacePathParameters(requests.addListMember.endpoint, { listId: requests.createList.output.listId }),
         requests.addListMember.input,
       );
 
@@ -274,7 +274,7 @@ describe('Testing end to end flow', () => {
   describe('Testing creation of list items', () => {
     it('endpoint should return status code UNAUTHORIZED for invalid token', async () => {
       const response = await httpClient.post(
-        replacePathParameters(requests.createListItem.endpoint, { listId: requests.createList.output.id }),
+        replacePathParameters(requests.createListItem.endpoint, { listId: requests.createList.output.listId }),
         requests.createListItem.input,
         { headers: invalidHeaders },
       );
@@ -284,7 +284,7 @@ describe('Testing end to end flow', () => {
 
     it('endpoint should return status code CREATED for valid request', async () => {
       const response = await httpClient.post(
-        replacePathParameters(requests.createListItem.endpoint, { listId: requests.createList.output.id }),
+        replacePathParameters(requests.createListItem.endpoint, { listId: requests.createList.output.listId }),
         requests.createListItem.input,
       );
 
@@ -297,7 +297,10 @@ describe('Testing end to end flow', () => {
   describe('Testing list item update', () => {
     it('endpoint should return status code UNAUTHORIZED for invalid token', async () => {
       const response = await httpClient.patch(
-        replacePathParameters(requests.updateListItem.endpoint, { listId: requests.createList.output.id, itemId: requests.createListItem.output.id }),
+        replacePathParameters(requests.updateListItem.endpoint, {
+          listId: requests.createList.output.listId,
+          itemId: requests.createListItem.output.itemId,
+        }),
         requests.updateListItem.input,
         { headers: invalidHeaders },
       );
@@ -307,7 +310,10 @@ describe('Testing end to end flow', () => {
 
     it('endpoint should return status code NO_CONTENT for valid request', async () => {
       const response = await httpClient.patch(
-        replacePathParameters(requests.updateListItem.endpoint, { listId: requests.createList.output.id, itemId: requests.createListItem.output.id }),
+        replacePathParameters(requests.updateListItem.endpoint, {
+          listId: requests.createList.output.listId,
+          itemId: requests.createListItem.output.itemId,
+        }),
         requests.updateListItem.input,
       );
 
@@ -319,7 +325,7 @@ describe('Testing end to end flow', () => {
 
   describe('Testing list items retrieval', () => {
     it('endpoint should return status code UNAUTHORIZED for invalid token', async () => {
-      const response = await httpClient.get(replacePathParameters(requests.getListItems.endpoint, { listId: requests.createList.output.id }), {
+      const response = await httpClient.get(replacePathParameters(requests.getListItems.endpoint, { listId: requests.createList.output.listId }), {
         headers: invalidHeaders,
       });
 
@@ -327,7 +333,7 @@ describe('Testing end to end flow', () => {
     });
 
     it('endpoint should return status code OK for valid request', async () => {
-      const response = await httpClient.get(replacePathParameters(requests.getListItems.endpoint, { listId: requests.createList.output.id }));
+      const response = await httpClient.get(replacePathParameters(requests.getListItems.endpoint, { listId: requests.createList.output.listId }));
 
       requests.getListItems.output = response.data.data;
 
@@ -338,7 +344,7 @@ describe('Testing end to end flow', () => {
       const createdItem: { id: string; name: string; status: string; ownerId: string; listId: string; createdAtTimestamp: string } =
         requests.getListItems.output.find(
           (item: { id: string; name: string; status: string; ownerId: string; listId: string; createdAtTimestamp: string }) =>
-            item.id === requests.createListItem.output.id,
+            item.id === requests.createListItem.output.itemId,
         );
 
       expect(createdItem).to.not.equal(undefined);
@@ -354,7 +360,10 @@ describe('Testing end to end flow', () => {
   describe('Testing list item delete', () => {
     it('endpoint should return status code UNAUTHORIZED for invalid token', async () => {
       const response = await httpClient.delete(
-        replacePathParameters(requests.deleteListItem.endpoint, { listId: requests.createList.output.id, itemId: requests.createListItem.output.id }),
+        replacePathParameters(requests.deleteListItem.endpoint, {
+          listId: requests.createList.output.listId,
+          itemId: requests.createListItem.output.itemId,
+        }),
         { headers: invalidHeaders },
       );
 
@@ -363,7 +372,10 @@ describe('Testing end to end flow', () => {
 
     it('endpoint should return status code NO_CONTENT for valid request', async () => {
       const response = await httpClient.delete(
-        replacePathParameters(requests.deleteListItem.endpoint, { listId: requests.createList.output.id, itemId: requests.createListItem.output.id }),
+        replacePathParameters(requests.deleteListItem.endpoint, {
+          listId: requests.createList.output.listId,
+          itemId: requests.createListItem.output.itemId,
+        }),
         requests.deleteListItem.input,
       );
 

@@ -4,9 +4,16 @@ import { DynamoDBClientFactory } from '@clients/dynamodb';
 import { LoggerFactory } from '@clients/logger';
 import { config } from '@src/config';
 
-import { GetListsHandlerFactory } from '@features/get-lists/get-lists.handler';
+import { GetListsRepositoryFactory } from './get-lists.repository';
+import { GetListsUsecaseFactory } from './get-lists.usecase';
+import { GetListsControllerFactory } from './get-lists.controller';
+import { GetListsHandlerFactory } from './get-lists.handler';
 
 const logger = LoggerFactory(config.serviceName, config.activeEnv);
 const dynamoDbClient = DynamoDBClientFactory(new DynamoDBClient({}), logger);
 
-export const { handler } = GetListsHandlerFactory(dynamoDbClient);
+const repository = GetListsRepositoryFactory(dynamoDbClient);
+const usecase = GetListsUsecaseFactory(repository);
+const controller = GetListsControllerFactory(usecase, logger);
+
+export const { handler } = GetListsHandlerFactory(controller, logger);

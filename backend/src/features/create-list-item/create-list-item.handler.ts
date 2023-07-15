@@ -1,57 +1,33 @@
-import type { APIGatewayEvent } from 'aws-lambda';
-import { v4 as uuid } from 'uuid';
+import type { LogClient } from '@clients/logger';
+import { APIGatewayEvent } from 'aws-lambda';
 
-import { DynamoDBClient } from '@clients/dynamodb';
-import { config } from '@src/config';
+import { CreateListItemController } from './create-list-item.controller';
 
-export const CreateListItemHandlerFactory = (dynamoDBClient: DynamoDBClient) => {
+export function CreateListItemHandlerFactory(controller: CreateListItemController, logger: LogClient) {
   const handler = async (event: APIGatewayEvent) => {
-    const data = JSON.parse(event.body ?? '{}');
-    const listId = event.pathParameters?.listId;
-
-    const listItem = {
-      id: uuid(),
-      listId,
-      ownerId: event.requestContext.authorizer?.claims?.sub,
-      createdAtTimestamp: new Date().getTime(),
-      itemName: data.name,
-      status: 'pending',
-    };
-
-    if (!listItem.ownerId) {
-      return { statusCode: 400, body: JSON.stringify({ success: false, message: 'Could not find user id' }) };
+    const requestId = event?.headers?.['requestId'];
+    if (requestId) {
+      logger.setRequestId(requestId);
     }
 
-    const databaseResponse = await dynamoDBClient.put({
-      TableName: config.dynamoDBTableName,
-      Item: {
-        partition_key: `list#${listItem.listId}`,
-        sort_key: `list-item#${listItem.id}`,
-        item_owner_id: listItem.ownerId,
-        created_at_timestamp: listItem.createdAtTimestamp,
-        item_id: listItem.id,
-        item_list_id: listItem.listId,
-        item_name: listItem.itemName,
-        item_status: listItem.status,
-        entity: 'list-item',
-      },
-    });
+    const data = {
+      ...JSON.parse(event?.body || '{}'),
+      ...(event?.pathParameters || {}),
+      userId: event.requestContext.authorizer?.claims.sub,
+    };
 
-    console.log('response', databaseResponse);
+    const response = await controller.createListItem(data);
 
     return {
-      statusCode: 201,
+      statusCode: response.status,
+      body: JSON.stringify(response.body ?? {}),
       headers: {
+        'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': true,
       },
-      body: JSON.stringify({
-        success: true,
-        message: 'List item created successfully',
-        data: listItem,
-      }),
     };
   };
 
   return { handler };
-};
+}
