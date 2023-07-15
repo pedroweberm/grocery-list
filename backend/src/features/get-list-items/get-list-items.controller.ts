@@ -37,7 +37,7 @@ export function GetListItemsControllerFactory(usecase: GetListItemsUsecase, logg
         body: {
           success: true,
           message: 'List items retrieved successfully',
-          data: response,
+          data: response.data,
         },
       };
     } catch (err: unknown) {
