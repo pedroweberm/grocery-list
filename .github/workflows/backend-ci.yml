@@ -98,5 +98,6 @@ jobs:
         run: cd ${{ env.base_folder }} && env STAGE_NAME=pr-${{github.event.number}} npm run test:integration
 
       - name: Remove temporary environment
+        if: always()
         run: |
           cd ${{ env.base_folder }} && npm run remove -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}

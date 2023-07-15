@@ -11,7 +11,6 @@ export function AddListMemberHandlerFactory(controller: AddListMemberController,
     }
 
     const data = {
-      ...(event?.queryStringParameters || {}),
       ...JSON.parse(event?.body || '{}'),
       ...(event?.pathParameters || {}),
       userId: event.requestContext.authorizer?.claims.sub,
