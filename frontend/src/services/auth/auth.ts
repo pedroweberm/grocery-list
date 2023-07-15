@@ -1,5 +1,15 @@
 import { Auth } from 'aws-amplify'
 
+export interface AuthenticatedUser {
+  email: string
+  email_verified: boolean
+  name: string
+  phone_number: string
+  phone_number_verified: boolean
+  preferred_username: string
+  sub: string
+}
+
 export const checkSession = async () => {
   try {
     const session = await Auth.currentSession()
@@ -64,5 +74,30 @@ export const confirmSignUp = async ({ username, code }: { username: string, code
     console.error(error)
 
     return { succcess: false, data: error }
+  }
+}
+
+export const getToken = async () => {
+  try {
+    const session = await Auth.currentSession()
+
+    return { success: true, token: session.getIdToken().getJwtToken() }
+
+  } catch (error) {
+    console.error('error while getting token', error)
+
+    return { success: false }
+  }
+}
+
+export const getAuthenticatedUser = async () => {
+  try {
+    const userData: AuthenticatedUser = (await Auth.currentAuthenticatedUser()).attributes
+
+    return { success: true, user: userData }
+  } catch (error) {
+    console.error('error while getting authenticated user', error)
+
+    return { success: false }
   }
 }

@@ -21,17 +21,17 @@ interface RoundeButtonExtraProps {
 
 const ButtonText = styled.h2<{ primary: boolean, margin?: boolean }>`
   font-family: poppins;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: ${({ primary }) => primary ? colors.purple.lighest : colors.purple.darkest};
 
   margin-right: ${({ margin }) => margin ? '10px' : '0'};
 `
 
 const Button = styled.button<{ primary: boolean, enabled: boolean, marginLeft?: boolean, marginRight?: boolean }>`
-  padding: 0px 20px;
-  height: 80px;
-  border-radius: 20px;
+  padding: 0px 5px;
+  height: 35px;
+  border-radius: 5px;
 
   opacity: ${({ enabled }: { enabled: boolean }) => enabled ? '100%' : '40%'};
 
@@ -60,16 +60,13 @@ const Button = styled.button<{ primary: boolean, enabled: boolean, marginLeft?: 
   }
 `
 
-export const RoundedButton = ({ loading, text, icon, primary, secondary, onClick, enabled, marginLeft, marginRight }: PropsWithChildren<RoundeButtonExtraProps>) => {
+export const SmallButton = ({ text, icon, primary, secondary, onClick, enabled, marginLeft, marginRight }: PropsWithChildren<RoundeButtonExtraProps>) => {
   const isPrimary = primary === true ? true : secondary === true ? false : true
 
   return (
     <Button onClick={onClick} primary={isPrimary} enabled={enabled} marginLeft={marginLeft} marginRight={marginRight} >
       <ButtonText primary={isPrimary} margin={icon}>{text}</ButtonText>
-      {!loading
-        ? icon && <FiArrowRight size={26} color={colors.purple.lighest} />
-        : icon && <SpinningLoader primary={isPrimary} />
-      }
+      {icon && <FiArrowRight size={26} color={colors.purple.lighest} />}
     </Button>
   )
 }

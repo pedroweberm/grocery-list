@@ -5,7 +5,7 @@ import {
 
 import './App.css'
 
-import { SignIn, SignUp, Home, ConfirmSignUp } from './pages'
+import { SignIn, SignUp, Home, ConfirmSignUp, List } from './pages'
 
 const router = createBrowserRouter([
   {
@@ -22,8 +22,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <Home />,
+    element: <Home />
   },
+  {
+    path: "/lists/:listId",
+    element: <List />,
+  }
 ]);
 
 function App() {

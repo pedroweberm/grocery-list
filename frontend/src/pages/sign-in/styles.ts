@@ -78,23 +78,3 @@ export const LoginInputLabel = styled.label`
   text-align: left;
   font-family: poppins;
 `
-
-export const SpinningLoader = styled.div`
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: 3px solid rgba(0, 0, 0, 0.8);
-  border-left-color: rgb(0, 0, 0, 0.3);
-  background: transparent;
-  animation: rotate-s-loader 1s linear infinite;
-  margin: 6rem auto;
-
-  @keyframes rotate-s-loader {
-    from {
-      transform: rotate(0);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-}
-`

@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { useCheckSession, useFormField } from '../../hooks'
+import { useSession, useFormField } from '../../hooks'
 import { signIn } from '../../services'
+import { RoundedButton, TextInput } from '../../components'
+import { passwordValidator, usernameValidator } from '../../helpers'
 
 import {
   MainContainer,
@@ -12,8 +14,6 @@ import {
   LoginContainer,
   LoginInputLabel
 } from './styles'
-import { RoundedButton, TextInput } from '../../components'
-import { passwordValidator, usernameValidator } from '../../helpers'
 
 export const SignIn = () => {
   const location = useLocation()
@@ -28,7 +28,7 @@ export const SignIn = () => {
   const onValid = useCallback(() => navigate('/'), [navigate])
   const onInvalid = useCallback(() => console.log('Session is invalid'), [])
 
-  useCheckSession({ onValid, onInvalid })
+  useSession({ onValid, onInvalid })
 
   async function handleSubmit() {
     setLoading(true)

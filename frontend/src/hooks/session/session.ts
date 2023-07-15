@@ -4,15 +4,18 @@ import { checkSession } from "../../services"
 
 type SessionType = Awaited<ReturnType<typeof checkSession>>['session']
 
-export const useCheckSession = ({ onValid, onInvalid }: { onValid?: () => unknown, onInvalid?: () => unknown } = {}) => {
+export const useSession = ({ onValid, onInvalid }: { onValid?: () => unknown, onInvalid?: () => unknown } = {}) => {
+  const [token, setToken] = useState<string | undefined>()
   const [session, setSession] = useState<SessionType>()
   
   useEffect(() => {
     const run = async function() {
-      const { valid, session: sessionData} = await checkSession()
+      const { valid, session: sessionData } = await checkSession()
       setSession(sessionData)
 
       if (valid) {
+        setToken(sessionData?.getIdToken().getJwtToken())
+
         return onValid?.()
       }
 
@@ -22,5 +25,5 @@ export const useCheckSession = ({ onValid, onInvalid }: { onValid?: () => unknow
     run()
   }, [onValid, onInvalid])
 
-  return session
+  return { session, token }
 }

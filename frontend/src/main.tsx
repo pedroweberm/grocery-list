@@ -2,19 +2,20 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Amplify } from 'aws-amplify';
 
+import { config } from './config'
 import App from './App'
 import './index.css'
 
 Amplify.configure({
   Auth: {
     // REQUIRED - Amazon Cognito Region
-    region: import.meta.env.VITE_AWS_REGION,
+    region: config.awsRegion,
 
     // OPTIONAL - Amazon Cognito User Pool ID
-    userPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID,
+    userPoolId: config.cognitoUserPoolId,
 
     // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-    userPoolWebClientId: import.meta.env.VITE_COGNITO_WEB_CLIENT_ID,
+    userPoolWebClientId: config.cognitoWebClientId,
 
     // OPTIONAL - Enforce user authentication prior to accessing AWS resources or not
     mandatorySignIn: true,
