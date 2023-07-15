@@ -12,6 +12,7 @@ export function AddListMemberControllerFactory(usecase: AddListMemberUsecase, lo
   const AddListMemberInput = object({
     username: string(),
     listId: string(),
+    userId: string(),
   });
 
   const validate = (data: unknown) => {
@@ -60,6 +61,22 @@ export function AddListMemberControllerFactory(usecase: AddListMemberUsecase, lo
   const errorHandler = {
     [AddListMemberErrorCodes.InvalidParameters]: (error: CustomError<AddListMemberErrorCodes>) => ({
       status: 400,
+      body: {
+        success: false,
+        message: error.message,
+        code: error.code,
+      },
+    }),
+    [AddListMemberErrorCodes.UserNotMemberOfList]: (error: CustomError<AddListMemberErrorCodes>) => ({
+      status: 403,
+      body: {
+        success: false,
+        message: error.message,
+        code: error.code,
+      },
+    }),
+    [AddListMemberErrorCodes.UsernameNotFound]: (error: CustomError<AddListMemberErrorCodes>) => ({
+      status: 404,
       body: {
         success: false,
         message: error.message,
