@@ -34,7 +34,7 @@ export function DeleteListItemControllerFactory(usecase: DeleteListItemUsecase, 
       const response = await usecase.execute(validated);
 
       return {
-        status: 201,
+        status: 204,
         body: {
           success: true,
           message: 'List item deleted successfully',

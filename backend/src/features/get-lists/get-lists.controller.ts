@@ -32,7 +32,7 @@ export function GetListsControllerFactory(usecase: GetListsUsecase, logger: LogC
       const response = await usecase.execute(validated);
 
       return {
-        status: 201,
+        status: 200,
         body: {
           success: true,
           message: 'List retrieved successfully',

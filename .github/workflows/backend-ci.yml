@@ -86,13 +86,12 @@ jobs:
           --provider aws \
           --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
           --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-          --profile ${{ env.aws_profile_name }} \
           --overwrite
 
       - name: Deploy to temporary environment
         run: |
           echo "STAGE_NAME=pr-${{github.event.number}}" >> $GITHUB_ENV
-          cd ${{ env.base_folder }} && env AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run deploy -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}
+          cd ${{ env.base_folder }} && npm run deploy -- --stage=pr-${{github.event.number}}
 
       - name: Run integration test
         run: cd ${{ env.base_folder }} && env AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} STAGE_NAME=pr-${{github.event.number}} npm run test:integration
@@ -100,4 +99,4 @@ jobs:
       - name: Remove temporary environment
         if: always()
         run: |
-          cd ${{ env.base_folder }} && env AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} npm run remove -- --aws-profile ${{ env.aws_profile_name }} --stage=pr-${{github.event.number}}
+          cd ${{ env.base_folder }} && npm run remove -- --stage=pr-${{github.event.number}}

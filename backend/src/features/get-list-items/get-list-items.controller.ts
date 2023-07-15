@@ -33,7 +33,7 @@ export function GetListItemsControllerFactory(usecase: GetListItemsUsecase, logg
       const response = await usecase.execute(validated);
 
       return {
-        status: 201,
+        status: 200,
         body: {
           success: true,
           message: 'List items retrieved successfully',
