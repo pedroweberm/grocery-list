@@ -1,0 +1,11 @@
+functions:
+  'emit-real-time-events':
+    handler: dist/src/features/real-time-events/emit-real-time-events/index.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt GroceryListTable.StreamArn
+          maximumRetryAttempts: 0
+          batchSize: 1
+    environment:
+      IOT_DATA_ENDPOINT: ${self:custom.variables.IOT_DATA_ENDPOINT}

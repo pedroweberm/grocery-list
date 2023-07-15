@@ -4,6 +4,7 @@
 /dist
 # dotenv files
 .env.json
+.env.local.json
 .env.dev.json
 .env.testing.json
 .env.production.json

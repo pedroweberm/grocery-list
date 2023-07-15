@@ -1,7 +1,0 @@
-functions:
-  'test-function':
-    handler: dist/src/features/test-feature/index.handler
-    events:
-      - http:
-          path: '/test'
-          method: 'get'

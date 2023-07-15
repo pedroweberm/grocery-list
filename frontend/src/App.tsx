@@ -5,9 +5,21 @@ import {
 
 import './App.css'
 
-import { Home } from './pages'
+import { SignIn, SignUp, Home, ConfirmSignUp } from './pages'
 
 const router = createBrowserRouter([
+  {
+    path: "/sign-in",
+    element: <SignIn />,
+  },
+  {
+    path: "/sign-up",
+    element: <SignUp />,
+  },
+  {
+    path: "/confirm-sign-up",
+    element: <ConfirmSignUp />,
+  },
   {
     path: "/",
     element: <Home />,

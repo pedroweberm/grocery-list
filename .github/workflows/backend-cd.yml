@@ -36,11 +36,9 @@ jobs:
           npx serverless config credentials \
           --provider aws \
           --key ${{ secrets.AWS_ACCESS_KEY_ID }} \
-          --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} \
           --overwrite
 
       - name: Deploy
         run: |
-          cd ${{ env.base_folder }} && \
-          npm run deploy -- \
+          cd ${{ env.base_folder }} && npm run deploy -- \
           --stage=$(echo '{ "testing": "testing", "master": "production" }' | jq -r 'to_entries[] | select(.key=="${{ github.ref_name }}") | .value')

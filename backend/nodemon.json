@@ -1,9 +1,10 @@
 {
   "watch": [
     "src",
-    "serverless.yml"
+    "serverless.yml",
+    "resolvers"
   ],
-  "ext": ".ts, .yml",
+  "ext": ".ts, .yml, .js",
   "ignore": [
     "dist"
   ]

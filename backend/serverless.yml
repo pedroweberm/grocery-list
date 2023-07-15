@@ -6,7 +6,7 @@ custom:
   runningStage: '${opt:stage, self:provider.stage}'
   bundle:
     tsConfig: './tsconfig.json'
-  variables: '${file(./infra/environment-variables.js)}'
+  variables: '${file(./resolvers/environment-variables.js)}'
 
 plugins:
   - serverless-offline
@@ -20,15 +20,16 @@ provider:
   deploymentBucket:
     blockPublicAccess: true
   iam:
-    role: ${file(./infra/permissions.js)}
+    role: ${file(./resolvers/permissions.js)}
   environment:
     NODE_ENV: '${self:custom.variables.NODE_ENV}'
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
-resources: ${file(./infra/resources.js)}
+resources:
+  Resources: ${file(./resolvers/resources.js)}
 
 package:
   individually: true
   excludeDevDependencies: true
 
-functions: ${file(./infra/functions.js)}
+functions: ${file(./resolvers/functions.js)}

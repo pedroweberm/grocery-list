@@ -1,0 +1,55 @@
+resources:
+  IotConnectorRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      MaxSessionDuration: 43200
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              AWS:
+                'Fn::GetAtt':
+                  - IamRoleLambdaExecution
+                  - Arn
+      Policies:
+        - PolicyName: IotConnectorDataPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'iot:Connect'
+                  - 'iot:Publish'
+                  - 'iot:Subscribe'
+                  - 'iot:Receive'
+                  - 'iot:GetThingShadow'
+                  - 'iot:UpdateThingShadow'
+                  - 'iot:DeleteThingShadow'
+                  - 'iot:ListNamedShadowsForThing'
+                Resource: '*'
+
+functions:
+  'get-presigned-url':
+    handler: dist/src/features/real-time-events/get-presigned-url/index.handler
+    events:
+      - http:
+          path: '/lists/{listId}/presigned-url'
+          method: 'get'
+          cors: true
+          request:
+            parameters:
+              paths:
+                listId: true
+          authorizer:
+            name: GroceryListAuthorizer
+            type: COGNITO_USER_POOLS
+            arn:
+              Fn::GetAtt:
+                - GroceryListCognitoUserPool
+                - Arn
+    environment:
+      IOT_CONNECTOR_ROLE_ARN: ${self:custom.variables.IOT_CONNECTOR_ROLE_ARN}
+      IOT_DATA_ENDPOINT: ${self:custom.variables.IOT_DATA_ENDPOINT}
