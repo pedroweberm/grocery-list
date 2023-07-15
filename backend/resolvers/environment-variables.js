@@ -57,7 +57,6 @@ module.exports = async ({ resolveVariable }) => {
       return variables;
     }
     case 'pr': {
-      const variablesFromFile = await getEnvValuesFromFile(stage);
       const customVariables = {
         NODE_ENV: stage,
         DYNAMODB_TABLE_NAME: { Ref: 'GroceryListTable' },
@@ -65,17 +64,13 @@ module.exports = async ({ resolveVariable }) => {
         IOT_CONNECTOR_ROLE_ARN: { 'Fn::GetAtt': ['IotConnectorRole', 'Arn'] },
         IOT_DATA_ENDPOINT: await resolveVariable('file(./resolvers/get-iot-endpoint.js):endpoint'),
       };
-      const variables = {
-        ...variablesFromFile,
-        ...customVariables,
-      };
+      const variables = customVariables
 
       validateVariables(variables);
 
       return variables;
     }
     case 'testing': {
-      const variablesFromFile = await getEnvValuesFromFile(stage);
       const customVariables = {
         NODE_ENV: stage,
         DYNAMODB_TABLE_NAME: { Ref: 'GroceryListTable' },
@@ -83,17 +78,13 @@ module.exports = async ({ resolveVariable }) => {
         IOT_CONNECTOR_ROLE_ARN: { 'Fn::GetAtt': ['IotConnectorRole', 'Arn'] },
         IOT_DATA_ENDPOINT: await resolveVariable('file(./resolvers/get-iot-endpoint.js):endpoint'),
       };
-      const variables = {
-        ...variablesFromFile,
-        ...customVariables,
-      };
+      const variables = customVariables
 
       validateVariables(variables);
 
       return variables;
     }
     case 'production': {
-      const variablesFromFile = await getEnvValuesFromFile(stage);
       const customVariables = {
         NODE_ENV: stage,
         DYNAMODB_TABLE_NAME: { Ref: 'GroceryListTable' },
@@ -101,10 +92,7 @@ module.exports = async ({ resolveVariable }) => {
         IOT_CONNECTOR_ROLE_ARN: { 'Fn::GetAtt': ['IotConnectorRole', 'Arn'] },
         IOT_DATA_ENDPOINT: await resolveVariable('file(./resolvers/get-iot-endpoint.js):endpoint'),
       };
-      const variables = {
-        ...variablesFromFile,
-        ...customVariables,
-      };
+      const variables = customVariables
 
       validateVariables(variables);
 
