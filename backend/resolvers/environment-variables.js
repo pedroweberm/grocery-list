@@ -40,17 +40,14 @@ module.exports = async ({ resolveVariable }) => {
       return variablesFromFile;
     }
     case 'dev': {
-      const variablesFromFile = await getEnvValuesFromFile(stage);
       const customVariables = {
+        NODE_ENV: stage,
         DYNAMODB_TABLE_NAME: { Ref: 'GroceryListTable' },
         COGNITO_USER_POOL_ID: { Ref: 'GroceryListCognitoUserPool' },
         IOT_CONNECTOR_ROLE_ARN: { 'Fn::GetAtt': ['IotConnectorRole', 'Arn'] },
         IOT_DATA_ENDPOINT: await resolveVariable('file(./resolvers/get-iot-endpoint.js):endpoint'),
       };
-      const variables = {
-        ...variablesFromFile,
-        ...customVariables,
-      };
+      const variables = customVariables;
 
       validateVariables(variables);
 
