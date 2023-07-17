@@ -23,9 +23,20 @@ export interface ListItem {
   id: string,
   name: string,
   status: string,
-  ownerId: string,
+  itemCreatedBy: string,
+  itemUpdatedBy?: string,
   listId: string,
   createdAtTimestamp: number,
+}
+
+export interface ListEventPayload {
+  id: string,
+  name: string,
+  status: string,
+  createdBy: string,
+  listId: string,
+  createdAtTimestamp: number,
+  updatedBy?: string,
 }
 
 const API_BASE_URL = config.listsApiBaseUrl
