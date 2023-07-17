@@ -39,6 +39,15 @@ export interface ListEventPayload {
   updatedBy?: string,
 }
 
+export interface CreateListItemResponse {
+  itemCreatedBy: string;
+  createdAtTimestamp: number;
+  itemId: string;
+  itemListId: string;
+  itemName: string;
+  itemStatus: string;
+}
+
 const API_BASE_URL = config.listsApiBaseUrl
 const STAGE = config.listsApiStage
 
@@ -100,6 +109,18 @@ export const updateListItem = async (listId: string, itemId: string, token: stri
   try {
     console.log('Sending request to update list item', itemId)
     const response = await httpClient.patch<ListsApiResponse<any>>(replacePathParameters(endpoints.updateListItem, { listId, itemId }), data, getRequestConfig(token))
+
+    return { success: response.data.success, data: response.data.data }
+  } catch (error) {
+    console.error('Error while updating list item', error)
+
+    return { success: false }
+  }
+}
+
+export const createListItem = async (listId: string, itemName: string, token: string) => {
+  try {
+    const response = await httpClient.post<ListsApiResponse<CreateListItemResponse>>(replacePathParameters(endpoints.createListItem, { listId }), { name: itemName }, getRequestConfig(token))
 
     return { success: response.data.success, data: response.data.data }
   } catch (error) {

@@ -52,7 +52,7 @@ export const ListItemContainer = styled.div`
   width: 95%;
 `
 
-export const ListItemTextContainer = styled.div<{ index: number }>`
+export const ListItemTextContainer = styled.div<{ index?: number }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -62,6 +62,8 @@ export const ListItemTextContainer = styled.div<{ index: number }>`
 
   border-radius: 15px;
   background: ${({ index }) => {
+    if (index === undefined) return colors.purple.lighest
+
     const remainder = index % 5;
 
     switch (remainder) {

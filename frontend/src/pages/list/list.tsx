@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import debounce from 'lodash.debounce'
 
 import { useSession, useIotRealTime, useAuthenticatedUser } from "../../hooks"
-import { getListItems, getMQTTUrl, updateListItem, ListItem as ListItemType, ListEventPayload } from "../../services/lists/lists"
+import { getListItems, getMQTTUrl, updateListItem, ListItem as ListItemType, ListEventPayload, createListItem } from "../../services/lists/lists"
 
 import {
   MainContainer,
@@ -47,6 +47,31 @@ const ListItem = ({ name, id, index, status, onUpdateName, onPressButton }:
       </ListItemTextContainer>
       <SquareButton onClick={onPresssButtonCallback}>
         {status === 'pending' ? <CheckIcon /> : <MinusIcon />}
+      </SquareButton>
+    </ListItemContainer>
+  )
+}
+
+const NewItemInput = ({ onPressButton }:
+  { onPressButton: (itemName: string) => Promise<unknown> }) => {
+  const [nameValue, setNameValue] = useState('')
+
+  const onPresssButtonCallback = useCallback(() => {
+    onPressButton(nameValue)
+    setNameValue('')
+  }, [nameValue, onPressButton])
+
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNameValue(e.target.value)
+  }
+
+  return (
+    <ListItemContainer>
+      <ListItemTextContainer>
+        <ListItemText value={nameValue} onChange={handleNameChange} placeholder="Ex.: Bread" />
+      </ListItemTextContainer>
+      <SquareButton onClick={onPresssButtonCallback}>
+        <PlusIcon />
       </SquareButton>
     </ListItemContainer>
   )
@@ -121,16 +146,47 @@ export const List = () => {
     if (listId && itemId && token && name) {
       updateListItem(listId, itemId, token, { name }).catch(error => console.error(error))
       const updatedItem = items.find(item => item.id === itemId) as ListItemType
-      handleListEvent(ListEvents.ITEM_UPDATED, { ...updatedItem, name }, true)
+      handleListEvent(ListEvents.ITEM_UPDATED, {
+        createdAtTimestamp: updatedItem.createdAtTimestamp,
+        createdBy: updatedItem.itemCreatedBy,
+        id: updatedItem.id,
+        listId: updatedItem.listId,
+        status: updatedItem.status,
+        updatedBy: updatedItem.itemUpdatedBy,
+        name
+      }, true)
     }
   }, [listId, token, handleListEvent, items])
   const onUpdateItemStatus = useCallback(async (itemId: string, status: string) => {
     if (listId && itemId && token) {
       updateListItem(listId, itemId, token, { status }).catch(error => console.error(error))
       const updatedItem = items.find(item => item.id === itemId) as ListItemType
-      handleListEvent(ListEvents.ITEM_UPDATED, { ...updatedItem, status }, true)
+      handleListEvent(ListEvents.ITEM_UPDATED, { 
+        createdAtTimestamp: updatedItem.createdAtTimestamp,
+        createdBy: updatedItem.itemCreatedBy,
+        id: updatedItem.id,
+        listId: updatedItem.listId,
+        name: updatedItem.name,
+        updatedBy: updatedItem.itemUpdatedBy,
+        status
+      }, true)
     }
   }, [listId, token, handleListEvent, items])
+  const onCreateItem = useCallback(async (itemName: string) => {
+    if (listId && itemName && token) {
+      const createItemResponse = await createListItem(listId, itemName, token).catch(error => console.error(error))
+
+      if (createItemResponse?.success && createItemResponse?.data)
+      handleListEvent(ListEvents.ITEM_CREATED, {
+        id: createItemResponse.data.itemId,
+        createdAtTimestamp: createItemResponse.data.createdAtTimestamp,
+        createdBy: createItemResponse.data.itemCreatedBy,
+        listId: createItemResponse.data.itemListId,
+        name: createItemResponse.data.itemName,
+        status: createItemResponse.data.itemStatus,
+      }, true)
+    }
+  }, [listId, token, handleListEvent])
 
   useEffect(() => {
     async function getIotUrl() {
@@ -169,6 +225,9 @@ export const List = () => {
         <TitleContainer>
           <Title>List Tilte</Title>
         </TitleContainer>
+        <NewItemInput
+          onPressButton={onCreateItem}
+        />
         <SectionTitle>Missing</SectionTitle>
         <ListItemsContainer>
           {items?.filter(item => item.status === 'pending').map((item, index) => (

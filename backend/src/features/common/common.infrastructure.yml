@@ -20,7 +20,7 @@ resources:
           KeySchema:
             - AttributeName: list_id
               KeyType: HASH
-            - AttributeName: sort_key
+            - AttributeName: partition_key
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
