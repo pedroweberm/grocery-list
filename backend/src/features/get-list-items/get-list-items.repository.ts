@@ -11,10 +11,11 @@ export function GetListItemsRepositoryFactory(dynamoDBClient: DynamoDBClient) {
   const databaseListItemToDomain = (databaseListItem: DatabaseListItem): ListItem => ({
     itemListId: databaseListItem.item_list_id,
     itemId: databaseListItem.item_id,
-    itemOwnerId: databaseListItem.item_owner_id,
+    itemCreatedBy: databaseListItem.item_created_by,
     itemName: databaseListItem.item_name,
     createdAtTimestamp: databaseListItem.created_at_timestamp,
     itemStatus: databaseListItem.item_status,
+    itemUpdatedBy: databaseListItem.item_updated_by,
   });
 
   const findListItems = async (listId: string) => {

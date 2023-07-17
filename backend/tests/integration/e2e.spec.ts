@@ -341,9 +341,9 @@ describe('Testing end to end flow', () => {
     });
 
     it('endpoint should return item that was created previously and have all expected fields', async () => {
-      const createdItem: { id: string; name: string; status: string; ownerId: string; listId: string; createdAtTimestamp: string } =
+      const createdItem: { id: string; name: string; status: string; itemCreatedBy: string; listId: string; createdAtTimestamp: string } =
         requests.getListItems.output.find(
-          (item: { id: string; name: string; status: string; ownerId: string; listId: string; createdAtTimestamp: string }) =>
+          (item: { id: string; name: string; status: string; itemCreatedBy: string; listId: string; createdAtTimestamp: string }) =>
             item.id === requests.createListItem.output.itemId,
         );
 
@@ -351,7 +351,7 @@ describe('Testing end to end flow', () => {
       expect(createdItem?.createdAtTimestamp).to.exist.and.be.a('number');
       expect(createdItem?.id).to.exist.and.be.a('string');
       expect(createdItem?.name).to.exist.and.be.a('string');
-      expect(createdItem?.ownerId).to.exist.and.be.a('string');
+      expect(createdItem?.itemCreatedBy).to.exist.and.be.a('string');
       expect(createdItem?.listId).to.exist.and.be.a('string');
       expect(createdItem?.status).to.exist.and.be.a('string');
     });

@@ -9,20 +9,21 @@ export type CreateListItemRepository = ReturnType<typeof CreateListItemRepositor
 export type DatabaseListItem = {
   partition_key: string;
   sort_key: string;
-  item_owner_id: string;
+  item_created_by: string;
   created_at_timestamp: number;
   item_id: string;
   item_list_id: string;
   item_name: string;
   item_status: string;
   entity: string;
+  item_updated_by?: string;
 };
 
 export function CreateListItemRepositoryFactory(dynamoDBClient: DynamoDBClient) {
   const listItemToDatabase = (listItem: ListItem): DatabaseListItem => ({
     partition_key: `${DatabaseEntityNames.List}#${listItem.itemListId}`,
     sort_key: `${DatabaseEntityNames.ListItem}#${listItem.itemId}`,
-    item_owner_id: listItem.itemOwnerId,
+    item_created_by: listItem.itemCreatedBy,
     created_at_timestamp: listItem.createdAtTimestamp,
     item_id: listItem.itemId,
     item_list_id: listItem.itemListId,

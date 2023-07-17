@@ -5,12 +5,13 @@ import { CreateListItemRepository } from './create-list-item.repository';
 export type CreateListItemUsecase = ReturnType<typeof CreateListItemUsecaseFactory>;
 
 export interface ListItem {
-  itemOwnerId: string;
+  itemCreatedBy: string;
   createdAtTimestamp: number;
   itemId: string;
   itemListId: string;
   itemName: string;
   itemStatus: string;
+  itemUpdatedBy?: string;
 }
 
 export const CreateListItemUsecaseFactory = (repository: CreateListItemRepository) => {
@@ -18,7 +19,7 @@ export const CreateListItemUsecaseFactory = (repository: CreateListItemRepositor
     const listItem: ListItem = {
       itemId: uuid(),
       itemListId: listId,
-      itemOwnerId: userId,
+      itemCreatedBy: userId,
       createdAtTimestamp: new Date().getTime(),
       itemName: name,
       itemStatus: 'pending',
