@@ -32,12 +32,13 @@ export const EmitRealTimeEventsHandlerFactory = () => {
       );
 
       const item = {
-        id: databaseItem['item_id'],
-        name: databaseItem['item_name'],
-        status: databaseItem['item_status'],
-        ownerId: databaseItem['item_owner_id'],
-        listId: databaseItem['item_list_id'],
-        createdAtTimestamp: databaseItem['created_at_timestamp'],
+        id: databaseItem.item_id,
+        name: databaseItem.item_name,
+        status: databaseItem.item_status,
+        createdBy: databaseItem.item_created_by,
+        listId: databaseItem.item_list_id,
+        createdAtTimestamp: databaseItem.created_at_timestamp,
+        updatedBy: databaseItem.item_updated_by,
       };
 
       const listId = item?.listId;

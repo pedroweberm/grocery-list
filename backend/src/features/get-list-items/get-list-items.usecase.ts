@@ -9,7 +9,7 @@ export const GetListItemsUsecaseFactory = (repository: GetListItemsRepository) =
     id: listItem.itemId,
     name: listItem.itemName,
     status: listItem.itemStatus,
-    ownerId: listItem.itemOwnerId,
+    createdBy: listItem.itemCreatedBy,
     listId: listItem.itemListId,
     createdAtTimestamp: listItem.createdAtTimestamp,
   });

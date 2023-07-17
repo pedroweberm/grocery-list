@@ -11,6 +11,7 @@ export function UpdateListItemRepositoryFactory(dynamoDBClient: DynamoDBClient) 
   const listItemUpdateAttributesToDatabase = (data: ListItemUpdateAttributes) => ({
     item_name: data.name,
     item_status: data.status,
+    item_updated_by: data.updatedBy,
   });
 
   const updateListItem = async (listId: string, itemId: string, updateAttributes: ListItemUpdateAttributes) => {

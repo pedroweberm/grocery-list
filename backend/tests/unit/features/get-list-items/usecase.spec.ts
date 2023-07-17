@@ -2,21 +2,21 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
-import { CreateListUsecaseFactory } from '@features/create-list/create-list.usecase';
+import { GetListItemsUsecaseFactory } from '@features/get-list-items/get-list-items.usecase';
 
-describe('Testing create list usecase', () => {
+describe('Testing get list items usecase', () => {
   const repositoryMock = {
-    createListMember: stub().resolves({}),
+    findListItems: stub().resolves([{}]),
   };
 
-  const usecase = CreateListUsecaseFactory(repositoryMock);
+  const usecase = GetListItemsUsecaseFactory(repositoryMock);
 
   it('execute function should exist', () => {
     expect(usecase.execute).to.exist.and.be.a('function');
   });
 
   it('execute function return success', async () => {
-    const response = await usecase.execute({ userId: 'test', name: 'test' });
+    const response = await usecase.execute({ listId: 'test' });
 
     expect(response.success).to.equal(true);
   });
