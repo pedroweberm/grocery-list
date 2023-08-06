@@ -43,7 +43,9 @@ export const ListCardsContainer = styled.div`
   align-items: center;
 `
 
-export const ListCard = styled.div`
+export const ListCard = styled.div.attrs({
+  className: "bg-purple-lighest flex items-center content-center"
+})`
   flex-shrink: 0;
   width: 80%;
   max-width: 300px;
@@ -51,8 +53,15 @@ export const ListCard = styled.div`
   border-radius: 20px;
   margin-left: 5%;
   margin-right: 2.5%;
-  background-color: ${() => colors.purple.lighest};
 `
+
+export const ListTitleContainer = styled.div.attrs({
+  className: "w-full bg-purple-darkest flex items-center content-start"
+})``
+
+export const ListTitle = styled.p.attrs({
+  className: "text-xl font-semibold text-purple-lighest py-6 px-2"
+})``
 
 export const Title = styled.h1`
   max-width: 400px;

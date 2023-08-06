@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { SmallButton } from "../../components"
+import { Modal, SmallButton } from "../../components"
 import { useSession } from "../../hooks"
 import { getLists, List } from "../../services/lists/lists"
 
@@ -11,11 +11,14 @@ import {
   Title,
   ListCardsContainer,
   ListCard,
-  TitleContainer
+  TitleContainer,
+  ListTitleContainer,
+  ListTitle
 } from './styles'
 
 export const Home = () => {
   const [userLists, setUserLists] = useState<List[]>()
+  const [isCreateListModalOpened, setIsCreateListModalOpened] = useState(false)
 
   const navigate = useNavigate()
 
@@ -33,10 +36,15 @@ export const Home = () => {
     }
 
     getUserLists()
+    console.log(token)
   }, [token])
 
   const handleListClick = (listId: string) => {
     navigate(`/lists/${listId}`, { state: { listId } })
+  }
+
+  const handleCreateListClick = () => {
+    setIsCreateListModalOpened(true)
   }
 
   return (
@@ -48,15 +56,27 @@ export const Home = () => {
             enabled
             primary
             text="New"
-            onClick={() => window.alert('New list')}
+            onClick={handleCreateListClick}
           />
         </TitleContainer>
         <ListCardsContainer>
           {userLists?.map((list) => (
-            <ListCard key={list.id} onClick={() => handleListClick(list.id)}>{list.name}</ListCard>
+            <ListCard key={list.id} onClick={() => handleListClick(list.id)}>
+              <ListTitleContainer>
+                <ListTitle>
+                  {list.name}
+                </ListTitle>
+              </ListTitleContainer>
+            </ListCard>
           ))}
         </ListCardsContainer>
       </ContentContainer>
+      <Modal
+        open={isCreateListModalOpened}
+        setOpen={setIsCreateListModalOpened}
+      >
+        Create new list
+      </Modal>
     </MainContainer>
   )
 }

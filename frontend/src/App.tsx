@@ -3,8 +3,6 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import './App.css'
-
 import { SignIn, SignUp, Home, ConfirmSignUp, List } from './pages'
 
 const router = createBrowserRouter([

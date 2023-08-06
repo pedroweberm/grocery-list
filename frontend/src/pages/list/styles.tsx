@@ -3,45 +3,24 @@ import { FiPlus, FiCheck, FiMinus } from 'react-icons/fi'
 
 import { colors } from '../../helpers'
 
-export const MainContainer = styled.div`
+export const MainContainer = styled.div.attrs({
+  className: "min-h-screen w-full flex items-start content-center"
+})`
   background: linear-gradient(180deg, ${colors.purple.medium} 1.54%, ${colors.purple.light} 100%);
-  width: 100vw;
-  height: 100vh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `
 
-export const ContentContainer = styled.div`
-  position: relative;
+export const ContentContainer = styled.div.attrs({
+  className: "w-full max-w-6xl h-full flex flex-col items-center content-center"
+})``
 
-  width: 100%;
-  max-width: 1100px;
+export const TitleContainer = styled.div.attrs({
+  className: "flex flex-row items-center content-between w-11/12"
+})``
 
-  height: 100%;
-  max-height: 900px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-`
-
-export const TitleContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-
-  width: 95%;
-`
-
-export const ListItemsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+export const ListItemsContainer = styled.div.attrs({
+  className: "flex flex-col items-center w-full"
+})`
+  max-width: 100vw;
 `
 
 export const ListItemContainer = styled.div`
