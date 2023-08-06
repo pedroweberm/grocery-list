@@ -80,7 +80,6 @@ const NewItemInput = ({ onPressButton }:
 export const List = () => {
   const [items, setItems] = useState<ListItemType[]>([])
   const [iotUrl, setIotUrl] = useState<string>('')
-  const [messages, setMessages] = useState<string[]>([])
 
   const { listId } = useParams()
 

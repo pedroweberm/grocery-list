@@ -1,6 +1,5 @@
-import { useState, ChangeEvent, useCallback, useEffect } from 'react'
-import { useLocation, useNavigate, useNavigation } from 'react-router-dom'
-import { FiArrowRight } from 'react-icons/fi'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { useFormField } from '../../hooks'
 import { confirmSignUp } from '../../services'

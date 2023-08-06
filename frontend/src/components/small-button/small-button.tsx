@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { FiArrowRight } from 'react-icons/fi'
 
 import { colors } from '../../helpers'
-import { SpinningLoader } from '../spinning-loader/spinning-loader'
 
 interface RoundeButtonExtraProps {
   enabled: boolean

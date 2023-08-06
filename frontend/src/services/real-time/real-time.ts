@@ -1,3 +1,4 @@
+//@ts-ignore-next-line
 import mqtt, { MqttClient } from 'mqtt/dist/mqtt';
 
 export function RealTimeService(topics?: string[]) {
@@ -45,7 +46,7 @@ export function RealTimeService(topics?: string[]) {
   const addMessageReceivedListener = (callback: (message: string, topic: string) => unknown) => {
     client?.on('message', (topic: string, message: string) => {
       console.log(`Received message: ${topic} - ${message}`);
-      callback(message.toString('utf8'), topic);
+      callback(message.toString(), topic);
     });
   };
 
