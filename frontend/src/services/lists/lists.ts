@@ -49,17 +49,16 @@ export interface CreateListItemResponse {
 }
 
 const API_BASE_URL = config.listsApiBaseUrl
-const STAGE = config.listsApiStage
 
 const endpoints = {
-  createList: `/${STAGE}/lists`,
-  getLists: `/${STAGE}/lists`,
-  addListMember: `/${STAGE}/lists/:listId/members`,
-  createListItem: `/${STAGE}/lists/:listId/items`,
-  updateListItem: `/${STAGE}/lists/:listId/items/:itemId`,
-  deleteListItem: `/${STAGE}/lists/:listId/items/:itemId`,
-  getListItems: `/${STAGE}/lists/:listId/items`,
-  getPresignedUrl: `/${STAGE}/lists/:listId/presigned-url`,
+  createList: `/lists`,
+  getLists: `/lists`,
+  addListMember: `/lists/:listId/members`,
+  createListItem: `/lists/:listId/items`,
+  updateListItem: `/lists/:listId/items/:itemId`,
+  deleteListItem: `/lists/:listId/items/:itemId`,
+  getListItems: `/lists/:listId/items`,
+  getPresignedUrl: `/lists/:listId/presigned-url`,
 };
 
 const getRequestConfig = (token: string) => ({ headers: { Authorization: token } })

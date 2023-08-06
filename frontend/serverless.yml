@@ -1,0 +1,57 @@
+service: grocery-list-frontend
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+
+resources:
+  Resources:
+    GroceryListAmplifyHostingApp:
+      Type: AWS::Amplify::App
+      Properties:
+        Name: grocery-list
+        AccessToken: file(./secrets.json):GITHUB_ACCESS_TOKEN
+        Platform: WEB
+        Repository: https://github.com/pedroweberm/grocery-list
+        EnvironmentVariables:
+          - Name: AMPLIFY_MONOREPO_APP_ROOT
+            Value: frontend
+          - Name: AMPLIFY_DIFF_DEPLOY
+            Value: false
+        BuildSpec: |
+          version: 1
+          applications:
+            - frontend:
+                phases:
+                  preBuild:
+                    commands:
+                      - npm i
+                  build:
+                    commands:
+                      - npm run build
+                artifacts:
+                  baseDirectory: dist/
+                  files:
+                    - "**/*"
+                cache:
+                  paths:
+                    - node_modules/**/*
+              appRoot: frontend
+    GroceryListAmplifyHostingProductionBranch: 
+      Type: AWS::Amplify::Branch
+      Properties:
+        AppId: !GetAtt GroceryListAmplifyHostingApp.AppId
+        BranchName: production
+        EnableAutoBuild: true
+        Framework: react
+        Stage: PRODUCTION
+    GroceryListAmplifyHostingStagingBranch: 
+      Type: AWS::Amplify::Branch
+      Properties:
+        AppId: !GetAtt GroceryListAmplifyHostingApp.AppId
+        BranchName: staging
+        EnableAutoBuild: true
+        Framework: react
+        Stage: DEVELOPMENT

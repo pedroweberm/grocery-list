@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:dev": "npx serverless deploy --verbose --aws-profile grocery-list-dev --stage dev"
   },
   "dependencies": {
     "@aws-amplify/pubsub": "^5.3.3",
