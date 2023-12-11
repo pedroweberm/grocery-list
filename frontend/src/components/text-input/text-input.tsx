@@ -28,6 +28,9 @@ const InputField = styled.input.attrs({
     isValid ? colors.purple.dark : colors.error};
   text-color: ${({ isValid }) =>
     isValid ? colors.grey.darkest : colors.error};
+  &::placeholder {
+    color: ${({ isValid }) => (isValid ? colors.grey.medium : colors.error)};
+  }
 `;
 
 export const TextInput = ({

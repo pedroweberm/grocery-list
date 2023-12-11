@@ -4,14 +4,14 @@ export const colors = {
     dark: '#7030BA',
     medium: '#9260CB',
     light: '#B48FDD',
-    lighest: '#D5BDED'
+    lightest: '#D5BDED'
   },
   grey: {
     darkest: '#544F54',
     dark: '#777277',
     medium: '#9A9599',
     light: '#BAB8BB',
-    lighest: '#DCDCDC'
+    lightest: '#DCDCDC'
   },
   accent: {
     yellow: '#FFFBDD',

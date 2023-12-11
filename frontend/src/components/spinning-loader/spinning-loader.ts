@@ -7,10 +7,9 @@ export const SpinningLoader = styled.div<{ primary?: boolean }>`
   height: 26px;
   border-radius: 50%;
   border: 3px solid transparent;
-  border-left-color: ${({ primary }) => primary ? colors.purple.lighest : colors.purple.darkest};
+  border-left-color: ${({ primary }) => primary ? colors.purple.lightest : colors.purple.darkest};
   background: transparent;
   animation: rotate-s-loader 1s linear infinite;
-  margin: 6rem auto;
 
   @keyframes rotate-s-loader {
     from {

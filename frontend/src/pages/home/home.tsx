@@ -17,40 +17,68 @@ import {
 } from "./styles";
 
 const CreateListComponent = ({
-  handleCreateListConfirm,
+  onConfirm,
   isLoading,
+  onCancel,
 }: PropsWithChildren<{
-  handleCreateListConfirm: () => unknown;
+  onConfirm: (name: string) => Promise<unknown>;
   isLoading: boolean;
+  onCancel: () => unknown;
 }>) => {
   const {
     value: newListName,
     isValid: isNewListNameValid,
     handleChange: handleNewListNameChange,
-  } = useFormField();
+    onBlur: onNewListNameBlur,
+    isDone: isNewListNameDone,
+  } = useFormField(undefined, (text: string) => text.length >= 2);
+
+  const handleConfirmButtonClick = useCallback(async () => {
+    await onConfirm(newListName);
+  }, [onConfirm, newListName]);
 
   return (
-    <div className="grid grid-cols-3 grid-rows-5 w-full max-h-56 bg-purple-darkest">
+    <div className="grid grid-cols-3 grid-rows-4 w-full bg-purple-lightest p-4">
       <div className="flex flex-col row-span-3 col-span-3">
-        Name:
+        <h2
+          className={`
+          text-3xl
+          font-semibold
+          leading-loose
+          text-left
+          text-purple-darkest
+          font-sans
+        `}
+        >
+          Name
+        </h2>
         <TextInput
           handleChange={handleNewListNameChange}
-          isValid={isNewListNameValid}
-          placeholder="My list"
-          type="submit"
+          isValid={isNewListNameValid || !isNewListNameDone}
+          placeholder="Ex.: family list"
+          type="text"
           value={newListName}
+          onBlur={onNewListNameBlur}
         />
       </div>
-      <div className="row-span-1 col-span-3" />
-      <div className="row-span-1 col-span-2" />
-      <div className="flex row-span-1 col-span-1">
+      <div className="row-span-1 col-span-3 flex flex-1 flex-row flex-between">
         <RoundedButton
-          onClick={handleCreateListConfirm}
-          text="Criar"
+          onClick={onCancel}
+          text="Cancel"
           loading={isLoading}
           enabled={!isLoading}
-          className="w-3/4"
           icon={false}
+          secondary
+          className="mr-3"
+        />
+        <RoundedButton
+          text="Create"
+          onClick={handleConfirmButtonClick}
+          loading={isLoading}
+          enabled={!isLoading}
+          icon
+          primary
+          className="ml-3"
         />
       </div>
     </div>
@@ -60,6 +88,7 @@ const CreateListComponent = ({
 export const Home = () => {
   const [userLists, setUserLists] = useState<List[]>();
   const [isCreateListModalOpened, setIsCreateListModalOpened] = useState(false);
+  const [isCreateListLoading, setIsCreateListLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -67,18 +96,21 @@ export const Home = () => {
 
   const { token } = useSession({ onInvalid });
 
+  const loadLists = useCallback(async () => {
+    if (token) {
+      const lists = await getLists(token);
+
+      setUserLists(lists.data);
+    }
+  }, [token]);
+
   useEffect(() => {
     async function getUserLists() {
-      if (token) {
-        const lists = await getLists(token);
-
-        setUserLists(lists.data);
-      }
+      await loadLists();
     }
 
     getUserLists();
-    console.log(token);
-  }, [token]);
+  }, [loadLists]);
 
   const handleListClick = (listId: string) => {
     navigate(`/lists/${listId}`, { state: { listId } });
@@ -88,11 +120,16 @@ export const Home = () => {
     setIsCreateListModalOpened(true);
   };
 
-  const handleCreateListConfirm = useCallback(
+  const onCreateListConfirm = useCallback(
     async (name: string) => {
-      await createList({ name }, token);
+      setIsCreateListLoading(true);
+      const createListResponse = await createList({ name }, token);
+      window.alert(createListResponse.data);
+      setIsCreateListLoading(false);
+      setIsCreateListModalOpened(false);
+      await loadLists();
     },
-    [token]
+    [token, loadLists]
   );
 
   return (
@@ -122,7 +159,9 @@ export const Home = () => {
         setOpen={setIsCreateListModalOpened}
       >
         <CreateListComponent
-          handleCreateListConfirm={handleCreateListConfirm}
+          onConfirm={onCreateListConfirm}
+          isLoading={isCreateListLoading}
+          onCancel={() => setIsCreateListModalOpened(false)}
         />
       </Modal>
     </MainContainer>

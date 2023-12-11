@@ -29,7 +29,7 @@ export const ContentContainer = styled.div`
 
 export const LoginContainer = styled.form`
   padding: 30px 25px;
-  background: ${colors.purple.lighest};
+  background: ${colors.purple.lightest};
   box-shadow: 0px 20px 40px ${colors.purple.medium};
   margin: 1em;
 
@@ -67,6 +67,7 @@ export const ButtonsContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  width: 50%;
 
   margin: 0 0 10% 0;
 `

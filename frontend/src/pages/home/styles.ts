@@ -33,7 +33,7 @@ export const TitleContainer = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  width: 95%;
+  width: 90%;
 `
 
 export const ListCardsContainer = styled.div`
@@ -44,7 +44,7 @@ export const ListCardsContainer = styled.div`
 `
 
 export const ListCard = styled.div.attrs({
-  className: "bg-purple-lighest flex items-center content-center"
+  className: "bg-purple-lightest flex items-center content-center"
 })`
   flex-shrink: 0;
   width: 80%;
@@ -60,7 +60,7 @@ export const ListTitleContainer = styled.div.attrs({
 })``
 
 export const ListTitle = styled.p.attrs({
-  className: "text-xl font-semibold text-purple-lighest py-6 px-2"
+  className: "text-xl font-semibold text-purple-lightest py-6 px-2"
 })``
 
 export const Title = styled.h1`
