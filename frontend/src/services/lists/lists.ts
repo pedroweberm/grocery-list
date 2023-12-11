@@ -48,6 +48,10 @@ export interface CreateListItemResponse {
   itemStatus: string;
 }
 
+export interface CreateListResponse {
+  listId: string;
+}
+
 const API_BASE_URL = config.listsApiBaseUrl
 
 const endpoints = {

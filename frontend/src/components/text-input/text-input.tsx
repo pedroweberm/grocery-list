@@ -1,27 +1,55 @@
-import { ChangeEvent } from 'react'
-import styled from 'styled-components'
+import { ChangeEvent } from "react";
+import styled from "styled-components";
 
-import { colors } from '../../helpers'
+import { colors } from "../../helpers";
 
-const InputField = styled.input<{ isValid: boolean }>`
-  width: 100%;
-  background: transparent;
-  border: 1px solid ${({ isValid }) => isValid ? colors.grey.dark : colors.error};
-  border-radius: 7.5px;
-  outline: none;
-  margin: 10px 0px;
-
-  font-size: 16px;
-  font-weight: 200;
-  color: ${({ isValid }) => isValid ? colors.grey.dark : colors.error};
+const InputField = styled.input.attrs({
+  className: `
+    w-full
+    bg-transparent
+    border
+    border-solid
+    
+    rounded-lg
+    outline-none
+    mx-0
+    my-2.5
+    text-base
+    font-extralight
+    
+    w-36
+    h-10
+    pl-3.5
+    ${({ className }: { className: string }) => className}
+  `,
+})<{ isValid: boolean; className?: string }>`
   font-family: poppins;
+  border-color: ${({ isValid }) =>
+    isValid ? colors.purple.dark : colors.error};
+  text-color: ${({ isValid }) =>
+    isValid ? colors.grey.darkest : colors.error};
+  &::placeholder {
+    color: ${({ isValid }) => (isValid ? colors.grey.medium : colors.error)};
+  }
+`;
 
-  width: 150px;
-  height: 40px;
-  padding-left: 15px;
-`
-
-export const TextInput = ({ value, handleChange, type, placeholder, onBlur, isValid }: { value: string, handleChange: (e: ChangeEvent<HTMLInputElement>) => unknown, type: string, placeholder: string, onBlur: () => unknown, isValid: boolean }) => {
+export const TextInput = ({
+  value,
+  handleChange,
+  type,
+  placeholder,
+  onBlur,
+  isValid,
+  className,
+}: {
+  value: string;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => unknown;
+  type: string;
+  placeholder: string;
+  onBlur?: () => unknown;
+  isValid: boolean;
+  className?: string;
+}) => {
   return (
     <InputField
       value={value}
@@ -30,6 +58,7 @@ export const TextInput = ({ value, handleChange, type, placeholder, onBlur, isVa
       placeholder={placeholder}
       onBlur={onBlur}
       isValid={isValid}
+      className={className}
     />
-  )
-}
+  );
+};

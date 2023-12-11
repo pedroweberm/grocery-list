@@ -27,6 +27,7 @@ secrets.json
 
 # env files
 .env.local.json
+.env
 
 # serverless files
 .serverless

@@ -28,7 +28,7 @@ export const ContentContainer = styled.div`
 
 export const RegisterContainer = styled.form`
   padding: 1em 1.5em;
-  background: ${colors.purple.lighest};
+  background: ${colors.purple.lightest};
   box-shadow: 0px 20px 40px ${colors.purple.medium};
   margin: 1em;
   margin-bottom: 2.5em;

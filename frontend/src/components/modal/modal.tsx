@@ -1,5 +1,5 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, HtmlHTMLAttributes } from 'react'
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, HtmlHTMLAttributes } from "react";
 
 export type ModalProps = HtmlHTMLAttributes<HTMLDivElement> & {
   open: boolean;
@@ -7,11 +7,12 @@ export type ModalProps = HtmlHTMLAttributes<HTMLDivElement> & {
   closeOnOutClick?: boolean;
   onClose?: () => void;
   hideCloseButton?: boolean;
+  className?: string;
 };
 
-export function Modal({ open, setOpen, children }: ModalProps) {
+export function Modal({ open, setOpen, children, className }: ModalProps) {
   function closeModal() {
-    setOpen(false)
+    setOpen(false);
   }
 
   return (
@@ -41,7 +42,9 @@ export function Modal({ open, setOpen, children }: ModalProps) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel
+                  className={`w-full max-w-md transform overflow-hidden rounded-2xl align-middle shadow-xl transition-all ${className}`}
+                >
                   {children}
                 </Dialog.Panel>
               </Transition.Child>
@@ -50,5 +53,5 @@ export function Modal({ open, setOpen, children }: ModalProps) {
         </Dialog>
       </Transition>
     </>
-  )
+  );
 }
