@@ -122,12 +122,14 @@ export const Home = () => {
 
   const onCreateListConfirm = useCallback(
     async (name: string) => {
-      setIsCreateListLoading(true);
-      const createListResponse = await createList({ name }, token);
-      window.alert(createListResponse.data);
-      setIsCreateListLoading(false);
-      setIsCreateListModalOpened(false);
-      await loadLists();
+      if (token) {
+        setIsCreateListLoading(true);
+        const createListResponse = await createList({ name }, token);
+        window.alert(createListResponse.data);
+        setIsCreateListLoading(false);
+        setIsCreateListModalOpened(false);
+        await loadLists();
+      }
     },
     [token, loadLists]
   );
